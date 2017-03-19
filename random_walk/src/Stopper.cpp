@@ -117,6 +117,7 @@ task Stopper::think(){ //Analizar entorno para decidir
 //To do it he have a decision tree
 // mask[0]==0 (obstacle) ? keep moving foward(task=0);
 //else rotate{
+//lastTask==rotate then return lastTask
 //mask[1]==0 (Left) ? Rotate to left(task=1);
 //mask[1]==1 (Right) ? Rotate to Right(task=2);
 //}
