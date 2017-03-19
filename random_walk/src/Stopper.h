@@ -55,11 +55,12 @@ private:
     ros::NodeHandle node;
     ros::Publisher commandPub; // Publisher to the robot's velocity command topic
     ros::Subscriber laserSub; // Subscriber to the robot's laser scan topic
-    bool keepMoving; // Indicates whether the robot should continue moving
+
     bool mask[2]; //Status mask
 
     std::stack<task> tasks; //Stack of task to do
     std::vector<task> mainTasks; //Main tasks move foward, rotate left and right
+    
     task think();
 
     int lastTask;
