@@ -1,0 +1,12 @@
+<launch>
+<!--  Launch turtle bot world  -->
+  <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"> 
+   <arg name="world_file" value= "/opt/ros/kinetic/share/turtlebot_gazebo/worlds/corridor.world"/> <!-- otro valor puede ser  "worlds/willowgarage.world"/>  -->
+  </include>
+ 
+  <!-- Run gmapping node -->
+  <node name = "gmapping" pkg = "gmapping" type="slam_gmapping"  />
+
+  <!-- Launch rviz -->
+  <include file="$(find turtlebot_rviz_launchers)/launch/view_robot.launch"/>
+</launch>
