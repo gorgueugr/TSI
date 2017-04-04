@@ -61,7 +61,24 @@ FrontierExplorer::FrontierExplorer()
 }
 
 void FrontierExplorer::gira360(){
+  ROS_INFO("giro 360 grados");
 
+   geometry_msgs::Twist msg;
+   double duration_time = 2*3.14 / 0.5; //el tiempo que tenemos que girar
+   double inicio =ros::Time::now().toSec(); //reloj al inicio del movimiento
+   double fin =ros::Time::now().toSec();
+   ros::Rate rate(0.2);
+
+   //Duracion en segundos del movimiento de rotacion en funcion de la v_angular
+   ros::Duration d(duration_time);
+   double duration  = d.toSec();
+
+   while (fin - inicio < duration) {
+     msg.angular.z = 0.5;
+     commandPub.publish(msg);
+     fin = ros::Time::now().toSec();
+     rate.sleep();
+   }
 
 
 }
@@ -81,14 +98,13 @@ void FrontierExplorer::getmapCallBack(const nav_msgs::OccupancyGrid::ConstPtr& m
     int currCell = 0;
     for (int y=0; y < cmGlobal.info.height; y ++)
       for (int x = 0; x < cmGlobal.info.width; x++){
-
-            theGlobalCm[y][x] =  cmGlobal.data[currCell];
-        if (theGlobalCm[y][x] != -1) mapIsEmpty = false;
-
-        currCell++;
+        if(theGlobalCm[y][x] != 100){
+              theGlobalCm[y][x] =  cmGlobal.data[currCell];
+          if (theGlobalCm[y][x] != -1) mapIsEmpty = false;
+          if(theGlobalCm[y][x] == 100) rellenaObstaculos(x,y);
         }
-
-
+      currCell++;
+      }
 
 //cmGlobal.header.seq = msg->header.seq;
 //cmGlobal.header.stamp = msg->header.stamp;
@@ -110,6 +126,16 @@ void FrontierExplorer::getmapCallBack(const nav_msgs::OccupancyGrid::ConstPtr& m
 //
 }
 void FrontierExplorer::rellenaObstaculos(int cell_x, int cell_y){
+  int d = (100/5)/2;
+  int y = (cell_y-d) < 0 ? 0 : cell_y-d;
+  int ymax = (cell_y+d) > cmGlobal.info.height ? cmGlobal.info.height : (cell_y+d);
+  int x = (cell_x-d) < 0 ? 0 : cell_x-d;
+  int xmax = (cell_x+d) > cmGlobal.info.width ? cmGlobal.info.width : (cell_x+d);
+
+  for(;x<xmax;x++)
+    for(;y<ymax;y++)
+      theGlobalCm[y][x]=100;
+
 
 
 }
@@ -196,7 +222,16 @@ while (it!=frontera.end()) {
 
 void FrontierExplorer::labelFrontierNodes(){
 
-
+  for (int y=0; y < cmGlobal.info.height; y ++)
+    for (int x = 0; x < cmGlobal.info.width; x++){
+      if(theGlobalCm[y][x]!=-1 && theGlobalCm[y][x]!=100)
+        if(someNeighbourIsUnknown(x,y)){
+          nodeOfFrontier * n=new nodeOfFrontier;
+          n->x=x;
+          n->y=y;
+          frontera.push_back(*n);
+        }
+    }
     //La frontera es un vector de pares de coordenadas (de tipo TipoFrontera)
     //Insertar en frontera los puntos, en coordenadas del mundo, que tienen algún vecino desconocido.
 
@@ -207,7 +242,16 @@ void FrontierExplorer::labelFrontierNodes(){
 
 
 void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
-
+  int d,menor=INT_MAX;
+  TipoFrontera::iterator it=frontera.begin();
+  while (it!=frontera.end()) {
+      d=distancia(nodoPosicionRobot.x,nodoPosicionRobot.y, it->x, it->y);
+    if (d <= menor){
+          selectednode=*it;
+          menor=d;
+      }
+    it++;
+  }
 }
 
 
