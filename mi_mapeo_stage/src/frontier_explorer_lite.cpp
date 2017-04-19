@@ -4,6 +4,10 @@
 //gestion de costmaps
 #include "tf/transform_listener.h"
 
+#include <ros/ros.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <actionlib/client/simple_action_client.h>
+#include <tf/transform_datatypes.h>
 
 
 #include <boost/thread.hpp>
@@ -64,12 +68,10 @@ void FrontierExplorer::gira360(){
   ROS_INFO("giro 360 grados");
 
    geometry_msgs::Twist msg;
-   double duration_time = 2*3.14 / 0.5; //el tiempo que tenemos que girar
-   double inicio =ros::Time::now().toSec(); //reloj al inicio del movimiento
+   double duration_time = 2*3.14 / 0.5;
+   double inicio =ros::Time::now().toSec();
    double fin =ros::Time::now().toSec();
-   ros::Rate rate(0.2);
 
-   //Duracion en segundos del movimiento de rotacion en funcion de la v_angular
    ros::Duration d(duration_time);
    double duration  = d.toSec();
 
@@ -77,9 +79,7 @@ void FrontierExplorer::gira360(){
      msg.angular.z = 0.5;
      commandPub.publish(msg);
      fin = ros::Time::now().toSec();
-     rate.sleep();
    }
-
 
 }
 
@@ -224,11 +224,11 @@ void FrontierExplorer::labelFrontierNodes(){
 
   for (int y=0; y < cmGlobal.info.height; y ++)
     for (int x = 0; x < cmGlobal.info.width; x++){
-      if(theGlobalCm[y][x]!=-1 && theGlobalCm[y][x]!=100)
+      if(theGlobalCm[y][x]!=-1  && theGlobalCm[y][x]!=100)
         if(someNeighbourIsUnknown(x,y)){
           nodeOfFrontier * n=new nodeOfFrontier;
-          n->x=x;
-          n->y=y;
+          n->x=x*cmGlobal.info.resolution  + cmGlobal.info.origin.position.x ;
+          n->y=y*cmGlobal.info.resolution  + cmGlobal.info.origin.position.y;
           frontera.push_back(*n);
         }
     }
@@ -242,13 +242,14 @@ void FrontierExplorer::labelFrontierNodes(){
 
 
 void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
-  int d,menor=INT_MAX;
+  int d,mayor=0;
   TipoFrontera::iterator it=frontera.begin();
   while (it!=frontera.end()) {
       d=distancia(nodoPosicionRobot.x,nodoPosicionRobot.y, it->x, it->y);
-    if (d <= menor){
-          selectednode=*it;
-          menor=d;
+    if (d >= mayor){
+          selectednode.x=it->x;
+          selectednode.y=it->y;
+          mayor=d;
       }
     it++;
   }
@@ -273,21 +274,71 @@ int main(int argc, char** argv) {
   //ROS_INFO("YA SE QUE EL MAPA NO ESTÁ VACÍO %d filas, %d columnas", explorador.cmGlobal.info.height, explorador.cmGlobal.info.width);
   ros::Rate frecuencia(0.2);
 
+  int step=0;
+  nodeOfFrontier posGoal;
+
+  move_base_msgs::MoveBaseGoal move_goal;
+  MoveBaseClient ac("move_base", true);
+
+  // Wait 60 seconds for the action server to become available
+  ROS_INFO("Waiting for the move_base action server");
+  ac.waitForServer(ros::Duration(60));
+
+  ROS_INFO("Connected to move base server");
+
+//  explorador.gira360();
+
   while (ros::ok()) {
 
+      switch (step) {
+        case 0:
+          explorador.gira360();
+        break;
+        case 1:
+          explorador.labelFrontierNodes();
+        break;
+        case 2:
+          explorador.selectNode(posGoal);
+        break;
+        case 3:
+        move_goal.target_pose.header.stamp = ros::Time::now();
+        move_goal.target_pose.pose.position.x = posGoal.x;
+        move_goal.target_pose.pose.position.y = posGoal.y;
+        move_goal.target_pose.header.frame_id = "map";
+        double radians = 180 * (M_PI/180);
+        tf::Quaternion quaternion;
+        quaternion = tf::createQuaternionFromYaw(radians);
 
-      //printMapa(explorador.theGlobalCm);
-      ROS_INFO("Escribiendo mapa en fichero de texto.");
-      explorador.printMapToFile();
-      ROS_INFO("Posicion actual del robot (%f %f %f)",explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y,explorador.yaw);
+        geometry_msgs::Quaternion qMsg;
+        tf::quaternionTFToMsg(quaternion, qMsg);
 
-      ROS_INFO("Esperando a finalizar el bucle");
-      frecuencia.sleep();
-      ros::spinOnce();
+        move_goal.target_pose.pose.orientation = qMsg;
 
-    }
+        // Send the goal command
+        ROS_INFO("Sending robot to: x = %f, y = %f", posGoal.x, posGoal.y);
+        ac.sendGoal(move_goal);
 
+        // Wait for the action to return
+        ac.waitForResult();
 
+        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        ROS_INFO("You have reached the goal!");
+        else
+        ROS_INFO("The base failed for some reason");
+        break;
+
+      }
+      step= step == 4 ? 0: step+1;
+  }
+
+  //printMapa(explorador.theGlobalCm);
+  ROS_INFO("Escribiendo mapa en fichero de texto.");
+  explorador.printMapToFile();
+  ROS_INFO("Posicion actual del robot (%f %f %f)",explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y,explorador.yaw);
+
+  ROS_INFO("Esperando a finalizar el bucle");
+  frecuencia.sleep();
+  ros::spinOnce();
   // shutdown the node and join the thread back before exiting
   ros::shutdown();
 
