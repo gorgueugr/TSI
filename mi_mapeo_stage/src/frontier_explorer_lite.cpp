@@ -224,7 +224,7 @@ void FrontierExplorer::labelFrontierNodes(){
 
   for (int y=0; y < cmGlobal.info.height; y ++)
     for (int x = 0; x < cmGlobal.info.width; x++){
-      if(theGlobalCm[y][x]!=-1  && theGlobalCm[y][x]!=100)
+      if(theGlobalCm[y][x]!=-1)
         if(someNeighbourIsUnknown(x,y)){
           nodeOfFrontier * n=new nodeOfFrontier;
           n->x=x*cmGlobal.info.resolution  + cmGlobal.info.origin.position.x ;
@@ -242,7 +242,7 @@ void FrontierExplorer::labelFrontierNodes(){
 
 
 void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
-  int d,mayor=0;
+  double d,mayor=0;
   TipoFrontera::iterator it=frontera.begin();
   while (it!=frontera.end()) {
       d=distancia(nodoPosicionRobot.x,nodoPosicionRobot.y, it->x, it->y);
