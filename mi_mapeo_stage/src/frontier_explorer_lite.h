@@ -57,7 +57,9 @@ class FrontierExplorer
         void labelFrontierNodes(); //Método que detecta nodos (celdas) frontera y las almacena en la lista frontera
         void selectNode(nodeOfFrontier &selectedNode);//Método que selecciona un nodo de la frontera para establecer el objetivo al que debe navegar el robot.
         void eraseFrontier(double x, double y); //Borra nodos de la frontera que se encuentren a una distancia (programada en la función) del punto real del mapa (x,y)
-        void printMapToFile();// Imprime el mapa en un fichero.
+				void cleanFrontier(); //Borra nodos de la frontera que se encuentren a una distancia (programada en la función) del punto real del mapa (x,y)
+
+				void printMapToFile();// Imprime el mapa en un fichero.
 
         void rellenaObstaculos(int cell_x, int cell_y); //Método que modifica el mapa rellenando obstáculos alrededor de la celda (x,y), en coordenadas cartesianas
 

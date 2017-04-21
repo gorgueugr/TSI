@@ -96,7 +96,7 @@ void FrontierExplorer::getmapCallBack(const nav_msgs::OccupancyGrid::ConstPtr& m
     //copia el mapa del mensaje en el mapa del explorador de fronteras
     //informa en mapEmpty si hay celdas con información.
     int currCell = 0;
-    for (int y=0; y < cmGlobal.info.height; y ++)
+    for (int y=0; y < cmGlobal.info.height; y++)
       for (int x = 0; x < cmGlobal.info.width; x++){
         if(theGlobalCm[y][x] != 100){
               theGlobalCm[y][x] =  cmGlobal.data[currCell];
@@ -105,6 +105,7 @@ void FrontierExplorer::getmapCallBack(const nav_msgs::OccupancyGrid::ConstPtr& m
         }
       currCell++;
       }
+
 
 //cmGlobal.header.seq = msg->header.seq;
 //cmGlobal.header.stamp = msg->header.stamp;
@@ -126,7 +127,7 @@ void FrontierExplorer::getmapCallBack(const nav_msgs::OccupancyGrid::ConstPtr& m
 //
 }
 void FrontierExplorer::rellenaObstaculos(int cell_x, int cell_y){
-  int d = (100/5)/2;
+  /*int d = (100/5)/2;
   int y = (cell_y-d) < 0 ? 0 : cell_y-d;
   int ymax = (cell_y+d) > cmGlobal.info.height ? cmGlobal.info.height : (cell_y+d);
   int x = (cell_x-d) < 0 ? 0 : cell_x-d;
@@ -134,7 +135,16 @@ void FrontierExplorer::rellenaObstaculos(int cell_x, int cell_y){
 
   for(;x<xmax;x++)
     for(;y<ymax;y++)
-      theGlobalCm[y][x]=100;
+      theGlobalCm[y][x]=100;*/
+
+      for (int x = -10; x<= 10; x++)
+       for (int y = -10; y <= 10; y++)
+         if ((cell_x+x >=0) && (cell_x+x < cmGlobal.info.width) &&
+             (cell_y+y >=0) && (cell_y+y < cmGlobal.info.height))
+             theGlobalCm[cell_y+y][cell_x+x] = 100;
+
+              //return true;
+      //return false;
 
 
 
@@ -174,7 +184,7 @@ bool FrontierExplorer::someNeighbourIsUnknown(int cell_x,int cell_y){
 
 
     for (int x = -1; x<= 1; x++)
-     for (int y = -1; y <= 1; y ++)
+     for (int y = -1; y <= 1; y++)
        if ((cell_x+x >=0) && (cell_x+x < cmGlobal.info.width) &&
            (cell_y+y >=0) && (cell_y+y < cmGlobal.info.height))
            if (theGlobalCm[cell_y+y][cell_x+x] == -1)
@@ -188,7 +198,13 @@ bool FrontierExplorer::someNeighbourIsObstacle(int cell_x,int cell_y){
     //cell_x representa la abcisa de una celda dada del mapa.
     //cell_y representa la ordenada.
     //Devuelve true si hay alguna casilla vecina a la celda dada que es un obstáculo
-    return true;
+    for (int x = -1; x<= 1; x++)
+     for (int y = -1; y <= 1; y++)
+       if ((cell_x+x >=0) && (cell_x+x < cmGlobal.info.width) &&
+           (cell_y+y >=0) && (cell_y+y < cmGlobal.info.height))
+           if (theGlobalCm[cell_y+y][cell_x+x] == 100)
+            return true;
+    return false;
 
 }
 
@@ -214,6 +230,11 @@ while (it!=frontera.end()) {
     frontera.erase(it);
   else it++;
 }
+
+}
+void FrontierExplorer::cleanFrontier() {
+//borra nodos de la frontera a una distancia de dos metros de la posición (px,py)
+  frontera.clear();
 }
 
 
@@ -222,15 +243,16 @@ while (it!=frontera.end()) {
 
 void FrontierExplorer::labelFrontierNodes(){
 
-  for (int y=0; y < cmGlobal.info.height; y ++)
+  for (int y = 0; y < cmGlobal.info.height; y++)
     for (int x = 0; x < cmGlobal.info.width; x++){
-      if(theGlobalCm[y][x]!=-1)
-        if(someNeighbourIsUnknown(x,y)){
+      if(theGlobalCm[y][x]==0){
+        if(someNeighbourIsUnknown(x,y) ){//&& !someNeighbourIsObstacle(x,y)
           nodeOfFrontier * n=new nodeOfFrontier;
-          n->x=x*cmGlobal.info.resolution  + cmGlobal.info.origin.position.x ;
-          n->y=y*cmGlobal.info.resolution  + cmGlobal.info.origin.position.y;
+          n->x= x * cmGlobal.info.resolution  + cmGlobal.info.origin.position.x ;
+          n->y= y * cmGlobal.info.resolution  + cmGlobal.info.origin.position.y;
           frontera.push_back(*n);
-        }
+          }
+      }
     }
     //La frontera es un vector de pares de coordenadas (de tipo TipoFrontera)
     //Insertar en frontera los puntos, en coordenadas del mundo, que tienen algún vecino desconocido.
@@ -240,13 +262,27 @@ void FrontierExplorer::labelFrontierNodes(){
 
 
 
+/*
+void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
+  double d,menor=INT_MAX;
+  TipoFrontera::iterator it=frontera.begin();
+  while (it!=frontera.end()) {
+      d=distancia(nodoPosicionRobot.x,nodoPosicionRobot.y, it->x, it->y);
+    if (d <= menor){
+          selectednode.x=it->x;
+          selectednode.y=it->y;
+          menor=d;
+      }
+    it++;
+  }
+}*/
 
 void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
   double d,mayor=0;
   TipoFrontera::iterator it=frontera.begin();
   while (it!=frontera.end()) {
       d=distancia(nodoPosicionRobot.x,nodoPosicionRobot.y, it->x, it->y);
-    if (d >= mayor){
+    if (d > mayor){
           selectednode.x=it->x;
           selectednode.y=it->y;
           mayor=d;
@@ -268,6 +304,7 @@ int main(int argc, char** argv) {
   //inicializa la visualización del objetivo seleccionado.
   explorador.inicializaMarkerSphere("objetivo",0, 0.0, 0.0, 1.0);
   //hacemos que se gestionen las callbacks hasta que el mapa tenga información
+
   ROS_INFO("Esperando a que mapa REinicie y tenga información");
   while (explorador.mapIsEmpty)
     ros::spinOnce();
@@ -286,21 +323,30 @@ int main(int argc, char** argv) {
 
   ROS_INFO("Connected to move base server");
 
-//  explorador.gira360();
 
   while (ros::ok()) {
 
       switch (step) {
         case 0:
+          explorador.limpiaMarkers();
+          explorador.limpiaMarkerObjetivo();
           explorador.gira360();
+          ++step;
         break;
         case 1:
-          explorador.labelFrontierNodes();
+          //explorador.gira360();
+          ++step;
         break;
         case 2:
+          explorador.cleanFrontier();
+          explorador.labelFrontierNodes();
+          //explorador.eraseFrontier(explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y);
+        //  explorador.eraseFrontier(posGoal.x,posGoal.y);
+        explorador.visualizaLista(explorador.frontera);
+
           explorador.selectNode(posGoal);
-        break;
-        case 3:
+          explorador.visualizaObjetivo(posGoal.x,posGoal.y);
+
         move_goal.target_pose.header.stamp = ros::Time::now();
         move_goal.target_pose.pose.position.x = posGoal.x;
         move_goal.target_pose.pose.position.y = posGoal.y;
@@ -321,24 +367,33 @@ int main(int argc, char** argv) {
         // Wait for the action to return
         ac.waitForResult();
 
-        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
         ROS_INFO("You have reached the goal!");
-        else
+        step = 0;
+        }
+        else{
         ROS_INFO("The base failed for some reason");
+        //explorador.eraseFrontier(posGoal.x,posGoal.y);
+        step = 0;
+        }
+        //explorador.eraseFrontier(posGoal.x,posGoal.y);
         break;
-
       }
-      step= step == 4 ? 0: step+1;
+      //step = step == 2 ? 0 : step + 1;
+
+      ROS_INFO("Escribiendo mapa en fichero de texto.");
+      explorador.printMapToFile();
+      ROS_INFO("Posicion actual del robot (%f %f %f)",explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y,explorador.yaw);
+
+      ROS_INFO("Esperando a finalizar el bucle");
+      frecuencia.sleep();
+      ros::spinOnce();
   }
 
   //printMapa(explorador.theGlobalCm);
-  ROS_INFO("Escribiendo mapa en fichero de texto.");
-  explorador.printMapToFile();
-  ROS_INFO("Posicion actual del robot (%f %f %f)",explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y,explorador.yaw);
 
-  ROS_INFO("Esperando a finalizar el bucle");
-  frecuencia.sleep();
-  ros::spinOnce();
+
+
   // shutdown the node and join the thread back before exiting
   ros::shutdown();
 
