@@ -137,8 +137,8 @@ void FrontierExplorer::rellenaObstaculos(int cell_x, int cell_y){
     for(;y<ymax;y++)
       theGlobalCm[y][x]=100;*/
 
-      for (int x = -10; x<= 10; x++)
-       for (int y = -10; y <= 10; y++)
+      for (int x = -11; x<= 11; x++)
+       for (int y = -11; y <= 11; y++)
          if ((cell_x+x >=0) && (cell_x+x < cmGlobal.info.width) &&
              (cell_y+y >=0) && (cell_y+y < cmGlobal.info.height))
              theGlobalCm[cell_y+y][cell_x+x] = 100;
@@ -233,7 +233,6 @@ while (it!=frontera.end()) {
 
 }
 void FrontierExplorer::cleanFrontier() {
-//borra nodos de la frontera a una distancia de dos metros de la posición (px,py)
   frontera.clear();
 }
 
@@ -262,7 +261,7 @@ void FrontierExplorer::labelFrontierNodes(){
 
 
 
-/*
+
 void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
   double d,menor=INT_MAX;
   TipoFrontera::iterator it=frontera.begin();
@@ -275,8 +274,9 @@ void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
       }
     it++;
   }
-}*/
+}
 
+/*
 void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
   double d,mayor=0;
   TipoFrontera::iterator it=frontera.begin();
@@ -289,7 +289,7 @@ void FrontierExplorer::selectNode(nodeOfFrontier &selectednode){
       }
     it++;
   }
-}
+}*/
 
 
 
@@ -322,9 +322,9 @@ int main(int argc, char** argv) {
   ac.waitForServer(ros::Duration(60));
 
   ROS_INFO("Connected to move base server");
+  bool keep=true;
 
-
-  while (ros::ok()) {
+  while (ros::ok() && keep) {
 
       switch (step) {
         case 0:
@@ -334,16 +334,16 @@ int main(int argc, char** argv) {
           ++step;
         break;
         case 1:
-          //explorador.gira360();
+          explorador.gira360();
           ++step;
         break;
         case 2:
           explorador.cleanFrontier();
           explorador.labelFrontierNodes();
-          //explorador.eraseFrontier(explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y);
+          explorador.eraseFrontier(explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y);
         //  explorador.eraseFrontier(posGoal.x,posGoal.y);
-        explorador.visualizaLista(explorador.frontera);
-
+          explorador.visualizaLista(explorador.frontera);
+          if(explorador.frontera.empty()) keep=false;
           explorador.selectNode(posGoal);
           explorador.visualizaObjetivo(posGoal.x,posGoal.y);
 
@@ -369,7 +369,8 @@ int main(int argc, char** argv) {
 
         if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
         ROS_INFO("You have reached the goal!");
-        step = 0;
+        explorador.eraseFrontier(posGoal.x,posGoal.y);
+        step = 2;
         }
         else{
         ROS_INFO("The base failed for some reason");
@@ -378,17 +379,19 @@ int main(int argc, char** argv) {
         }
         //explorador.eraseFrontier(posGoal.x,posGoal.y);
         break;
+
       }
       //step = step == 2 ? 0 : step + 1;
 
-      ROS_INFO("Escribiendo mapa en fichero de texto.");
-      explorador.printMapToFile();
-      ROS_INFO("Posicion actual del robot (%f %f %f)",explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y,explorador.yaw);
 
       ROS_INFO("Esperando a finalizar el bucle");
       frecuencia.sleep();
       ros::spinOnce();
   }
+
+  ROS_INFO("Escribiendo mapa en fichero de texto.");
+  explorador.printMapToFile();
+  //ROS_INFO("Posicion actual del robot (%f %f %f)",explorador.nodoPosicionRobot.x,explorador.nodoPosicionRobot.y,explorador.yaw);
 
   //printMapa(explorador.theGlobalCm);
 
