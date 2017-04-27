@@ -55,8 +55,8 @@ PLUGINLIB_EXPORT_CLASS(myastar_planner::MyastarPlanner, nav_core::BaseGlobalPlan
 
 namespace myastar_planner {
 
-  multiset<coupleOfCells>::iterator getPositionInList(multiset<coupleOfCells> & list1, unsigned int cellID);
-  bool isContains(multiset<coupleOfCells> & list1, int cellID);
+  list<coupleOfCells>::iterator getPositionInList(list<coupleOfCells> & list1, unsigned int cellID);
+  bool isContains(list<coupleOfCells> & list1, int cellID);
 
   MyastarPlanner::MyastarPlanner()
   : costmap_ros_(NULL), initialized_(false){}
@@ -177,7 +177,7 @@ namespace myastar_planner {
     cpstart.hCost = MyastarPlanner::calculateHCost(cpstart.index,cpgoal.index);
 
     //insertamos la casilla inicial en abiertos
-    MyastarPlanner::openList.insert(cpstart);
+    MyastarPlanner::openList.push_back(cpstart);
     ROS_INFO("Inserto en Abiertos: %d", cpstart.index );
     ROS_INFO("Index del goal: %d", cpgoal.index );
 
@@ -216,22 +216,21 @@ namespace myastar_planner {
     while (!MyastarPlanner::openList.empty()) //while the open list is not empty continuie the search
     {
 
-        multiset<coupleOfCells>::iterator it = openList.begin();
+
         //escoger UNA casilla DE abiertos
-        coupleOfCells COfCells= *it;
-        //openList.pop_front();
-        openList.erase(it);
+        coupleOfCells COfCells= openList.front();
+        openList.pop_front();
         currentIndex=COfCells.index;
 
 
 
         //obtenemos un iterador al elemento en la lista de abiertos
-        //multiset<coupleOfCells>::iterator it=getPositionInList(openList,currentIndex);
+        list<coupleOfCells>::iterator it=getPositionInList(openList,currentIndex);
 
 
 
         //y la insertamos en cerrados
-        MyastarPlanner::closedList.insert(COfCells);
+        MyastarPlanner::closedList.push_back(COfCells);
 
          visualizaCelda(marker_Closed_publisher, markers_ClosedList, COfCells.index);
 
@@ -270,7 +269,7 @@ namespace myastar_planner {
               while (currentParent != cpstart.index) //e.d. mientras no lleguemos al nodo start
               {
                 //encontramos la posición de currentParent en cerrados
-                multiset<coupleOfCells>::iterator it=getPositionInList(closedList,currentParent);
+                list<coupleOfCells>::iterator it=getPositionInList(closedList,currentParent);
 
                 //hacemos esa posición que sea el currentCouple
                 coupleOfCells currentCouple;
@@ -389,10 +388,8 @@ double MyastarPlanner::calculateHCost(unsigned int start, unsigned int goal) {
   costmap_->mapToWorld(mstart_x, mstart_y, wstart_x, wstart_y);
   costmap_->indexToCells(goal, mgoal_x, mgoal_y);
   costmap_->mapToWorld(mgoal_x, mgoal_y, wgoal_x, wgoal_y);
-  //Euclidea
+
   return sqrt((pow(wstart_x - wgoal_x,2))+pow(wstart_y - wgoal_y, 2));
-  //Manhattan
-  //return abs(wgoal_x - wstart_x) + abs(wgoal_y - wstart_y);
  }
 
 
@@ -408,9 +405,9 @@ bool MyastarPlanner::compareFCost(coupleOfCells const &c1, coupleOfCells const &
 //Output: index of the cell in the list
 //Description: it is used to search the index of a cell in a list
 /*********************************************************************************/
-multiset<coupleOfCells>::iterator getPositionInList(multiset<coupleOfCells> & list1, unsigned int cellID)
+list<coupleOfCells>::iterator getPositionInList(list<coupleOfCells> & list1, unsigned int cellID)
 {
-   for (multiset<coupleOfCells>::iterator it = list1.begin(); it != list1.end(); it++){
+   for (list<coupleOfCells>::iterator it = list1.begin(); it != list1.end(); it++){
      if (it->index == cellID)
          return it;
 
@@ -464,9 +461,9 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
 //Output: true or false
 //Description: it is used to check if a cell exists in the open list or in the closed list
 /*********************************************************************************/
- bool isContains(multiset<coupleOfCells> & list1, int cellID)
+ bool isContains(list<coupleOfCells> & list1, int cellID)
  {
-   for (multiset<coupleOfCells>::iterator it = list1.begin(); it != list1.end(); it++){
+   for (list<coupleOfCells>::iterator it = list1.begin(); it != list1.end(); it++){
      if (it->index == cellID)
          return true;
   }
@@ -485,7 +482,7 @@ double MyastarPlanner::getMoveCost(unsigned int here, unsigned int there) {
 //Output:
 //Description: it is used to add the neighbor Cells to the open list
 /*********************************************************************************/
-void MyastarPlanner::addNeighborCellsToOpenList(multiset<coupleOfCells> & OPL, vector <unsigned int> neighborCells, unsigned int parent, float gCostParent, unsigned int goalCell) //,float tBreak)
+void MyastarPlanner::addNeighborCellsToOpenList(list<coupleOfCells> & OPL, vector <unsigned int> neighborCells, unsigned int parent, float gCostParent, unsigned int goalCell) //,float tBreak)
 {
         vector <coupleOfCells> neighborsCellsOrdered;
         for(uint i=0; i< neighborCells.size(); i++)
@@ -493,10 +490,8 @@ void MyastarPlanner::addNeighborCellsToOpenList(multiset<coupleOfCells> & OPL, v
           coupleOfCells CP;
           CP.index=neighborCells[i]; //insert the neighbor cell
           CP.parent=parent; //insert the parent cell
-          CP.gCost = gCostParent;
-          CP.hCost = calculateHCost(CP.index,goalCell);
-          CP.fCost = CP.gCost + CP.hCost;
-          OPL.insert(CP);
+
+          OPL.push_back(CP);
         }
       }
 
