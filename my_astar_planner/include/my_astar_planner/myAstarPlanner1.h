@@ -160,14 +160,6 @@ struct coupleOfCells {
 
       //devuelve celdas adyacentes a CellID que estén libres
       vector <unsigned int> findFreeNeighborCell (unsigned int CellID);
-      //vector <unsigned int> findNeighborCellJPS (unsigned int CellID);
-
-      //JPS
-      vector <unsigned int> identifySuccessors (unsigned int CellID,unsigned int start,unsigned int end);
-      bool isWalkable(int x, int y);
-      bool jump(unsigned int current_x,unsigned int current_y,int dx,int dy,unsigned int start,unsigned int end,unsigned int &node);
-
-
 
       /*******************************************************************************/
       //Function Name: addNeighborCellsToOpenList

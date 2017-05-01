@@ -323,9 +323,8 @@ namespace myastar_planner {
 
 
           //search the neighbors of the current Cell
-          vector <unsigned int> neighborCells = identifySuccessors(currentIndex,cpstart.index,cpgoal.index);
+          vector <unsigned int> neighborCells=findFreeNeighborCell(currentIndex);
           ROS_INFO("Ha encontrado %u vecinos", (unsigned int)neighborCells.size());
-
 
           //neighbors that exist in the closedList are ignored
           vector <unsigned int> neighborNotInClosedList;
@@ -349,7 +348,6 @@ namespace myastar_planner {
             else
               neighborsNotInOpenList.push_back(neighborNotInClosedList[i]);
           }
-
 
 
          //add the neighbors that are not in the open list to the open list and mark the current cell as their parent
@@ -394,7 +392,7 @@ double MyastarPlanner::calculateHCost(unsigned int start, unsigned int goal) {
   //Euclidea
   return sqrt((pow(wstart_x - wgoal_x,2))+pow(wstart_y - wgoal_y, 2));
   //Manhattan
-  //return abs(mgoal_x - mstart_x) + abs(mgoal_y - mstart_y);
+  //return abs(wgoal_x - wstart_x) + abs(wgoal_y - wstart_y);
  }
 
 
@@ -458,205 +456,6 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
       }
       return  freeNeighborCells;
       }
-
-
-       /*******************************************************************************
-       * Function Name: findNeighborCellJPS
-        * Inputs: the row and columun of the current Cell
-        * Output: a vector of free neighbor cells of the current cell
-        * Description:it is used to find the free neighbors Cells of a the current Cell in the grid
-        * Check Status: Checked by Anis, Imen and Sahar
-      *********************************************************************************/
-/*      vector <unsigned int> MyastarPlanner::findNeighborCellJPS (unsigned int CellID,unsigned int parent){
-
-              if(parent!=0){
-                unsigned int mx, my;
-                unsigned int px, py;
-                double  wx, wy;
-                int dx, dy;
-                bool walkY , walkX;
-                costmap_->indexToCells(CellID,mx,my);
-                costmap_->indexToCells(parent,px,py);
-
-                vector <unsigned int>  neighbours;
-                //Direction move
-                dx = (mx-px);
-                dy = (my-py);
-
-                //Diagonal move
-                if(dx!=0 && dy!=0){
-                    if(((my+dy>=0 )&&(my+dy < costmap_->getSizeInCellsY()))
-                      if(costmap_->getCost(mx,my+dy) < 127)
-                        {
-                          neighbours.push_back(costmap_->getIndex(mx,my+dy));
-                          walkY=true;
-                        }
-                    if((mx+dx>=0)&&(mx+dx < costmap_->getSizeInCellsX()))
-                      if(costmap_->getCost(mx+dx,my) < 127)
-                        {
-                          neighbours.push_back(costmap_->getIndex(mx+dx,my));
-                          walkX=true;
-                        }
-                    if(walkX || walkY){
-                      neighbours.push_back(costmap_->getIndex(mx+dx,my+dy));
-                    }
-
-                    //Forced neighbours
-                    if((mx-dx>=0)&&(mx-dx < costmap_->getSizeInCellsX()))
-                        if(costmap_->getCost(mx-dx,my) > 127 && walkY)
-                          neighbours.push_back(costmap_->getIndex(mx-dx,my+dy));
-                    if((my-dy >=0 )&&(my-dy < costmap_->getSizeInCellsY()))
-                      if(costmap_->getCost(mx,my-dy) > 127 && walkX)
-                        neighbours.push_back(costmap_->getIndex(mx+dx,my-dy));
-
-                }else{
-                  if(dx==0){
-                    if((my+dy >=0 )&&(my+dy < costmap_->getSizeInCellsY()))
-                      if(costmap_->getCost(mx,my+dy) < 127)
-                        neighbours.push_back(costmap_->getIndex(mx,my+dy));
-
-                    //Forced neighbours
-                    if((mx+1>=0)&&(mx+1 < costmap_->getSizeInCellsX())&&(my+dy >=0 )&&(my+dy < costmap_->getSizeInCellsY()))
-                      if(costmap_->getCost(mx+1,my) > 127)
-                        neighbours.push_back(costmap_->getIndex(mx+1,my+dy));
-                    if((mx-1>=0)&&(mx-1 < costmap_->getSizeInCellsX())&&(my-dy >=0 )&&(my-dy < costmap_->getSizeInCellsY()))
-                    if(costmap_->getCost(mx-1,my) > 127)
-                      neighbours.push_back(costmap_->getIndex(mx-1,my-dy));
-                  }else{
-                    if((mx+dx>=0)&&(mx+dx < costmap_->getSizeInCellsX()))
-                      if(costmap_->getCost(mx+dx,my) < 127)
-                        neighbours.push_back(costmap_->getIndex(mx+dx,my));
-
-                    //Forced neighbours
-                    if((mx+dx>=0)&&(mx+dx < costmap_->getSizeInCellsX())&&(my+1 >=0 )&&(my+1 < costmap_->getSizeInCellsY()))
-                    if(costmap_->getCost(mx,my+1) > 127)
-                      neighbours.push_back(costmap_->getIndex(mx+dx,my+1));
-                    if((mx+dx>=0)&&(mx+dx < costmap_->getSizeInCellsX())&&(my-1 >=0 )&&(my-1 < costmap_->getSizeInCellsY()))
-                    if(costmap_->getCost(mx,my-1) > 127)
-                      neighbours.push_back(costmap_->getIndex(mx+dx,my-1));
-
-                  }
-                }
-
-
-                return neighbours;
-            }
-          return  findFreeNeighborCell(cellID);
-  }*/
-  /*******************************************************************************/
-  //Function Name: jump
-  //Inputs:
-  //Output:
-  //Description:
-  /*********************************************************************************/
-  bool MyastarPlanner::jump(unsigned int current_x,unsigned int current_y,int dx,int dy,unsigned int start,unsigned int end,unsigned int &node){
-
-      unsigned int nextX = current_x + dx;
-      unsigned int nextY = current_y + dy;
-      unsigned int next,curr;
-      next = costmap_->getIndex(nextX, nextY);
-      curr = costmap_->getIndex(current_x, current_y);
-
-      if(!isWalkable(nextX,nextY))
-          return false;
-      if(next == end){
-        node = next;
-
-        return true;
-      }
-
-      if( dx != 0 && dy != 0 ){ //DIAGONAL
-
-        if(!isWalkable(current_x + dx,current_y)){
-          node = next;
-          return true;
-        }
-        if(!isWalkable(current_x,current_y + dy)){
-          node = next;
-          return true;
-        }
-
-        if( jump(nextX,nextY,dx,0,start,end,node) != NULL || jump(nextX,nextY,0,dy,start,end,node) != NULL ){
-          node = next;
-          return true;
-        }
-
-      }else{
-        if(dx != 0){ //HORIZONTAL
-          if(!isWalkable(current_x, current_y + 1)){
-            if(isWalkable(current_x + dx ,current_y +1)){
-              node = next;
-              return true;
-            }
-          } else if(!isWalkable(current_x, current_y - 1)){
-              if(isWalkable(current_x + dx , current_y -1)){
-                node = next;
-                return true;
-              }
-          }
-        }//Dx!=0
-        else {
-          if(!isWalkable(current_x + 1 , current_y)){
-            if(isWalkable(current_x + 1 ,current_y + dy)){
-              node = next;
-              return true;
-            }
-          } else if(!isWalkable(current_x -1, current_y)){
-              if(isWalkable(current_x - 1 , current_y + dy)){
-                node = next;
-                return true;
-              }
-          }
-        }
-      }
-
-
-      return jump(nextX,nextY,dx,dy,start,end,node);
-  }
-  /*******************************************************************************/
-  //Function Name: isWalkable
-  //Inputs: x,y
-  //Output: true or false
-  //Description: it is used to check if a cell is walkable on the grid
-  /*********************************************************************************/
-  bool MyastarPlanner::isWalkable(int x,int y){
-    if((x>=0)&&(x< costmap_->getSizeInCellsX())&&(y>=0 )&&(y< costmap_->getSizeInCellsY()))
-      if(costmap_->getCost(x,y) < 127)
-        return true;
-
-    return false;
-  }
-/*******************************************************************************/
-//Function Name: identifySuccessors
-//Inputs: the cellID
-//Output: vector of successors
-//Description: detect successors of a node
-/*********************************************************************************/
-
-vector <unsigned int> MyastarPlanner::identifySuccessors (unsigned int CellID,unsigned int start,unsigned int end){
-
-  unsigned int c_x,c_y;
-  costmap_->indexToCells(CellID,c_x,c_y);
-
-  std::vector<unsigned int> neighbours = findFreeNeighborCell(CellID);
-  std::vector<unsigned int> successors;
-
-  for(int i=0;i<neighbours.size();i++){
-    unsigned int n_x,n_y;
-    costmap_->indexToCells(neighbours[i], n_x, n_y);
-
-    int dx = (n_x - c_x);
-    int dy = (n_y - c_y);
-
-    unsigned int jump_point;
-
-    bool succed = jump(c_x,c_y,dx,dy,start,end,jump_point);
-    if(succed)
-      successors.push_back(jump_point);
-  }
-  return successors;
-}
-
 
 
 /*******************************************************************************/
