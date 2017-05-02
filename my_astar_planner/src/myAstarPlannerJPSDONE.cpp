@@ -34,7 +34,7 @@
 *
 * Authors: Eitan Marder-Eppstein, Sachin Chitta
 *********************************************************************/
-#include "../include/my_astar_planner/myAstarPlannerJPS.h"
+#include "../include/my_astar_planner/myAstarPlanner.h"
 #include <pluginlib/class_list_macros.h>
 
 //para pintar puntos
@@ -326,7 +326,9 @@ namespace myastar_planner {
           vector <unsigned int> neighborCells = identifySuccessors(currentIndex,cpstart.index,cpgoal.index);
           ROS_INFO("Ha encontrado %u vecinos", (unsigned int)neighborCells.size());
 
+
           //neighbors that exist in the closedList are ignored
+
           vector <unsigned int> neighborNotInClosedList;
           for(uint i=0; i<neighborCells.size(); i++)
           {
@@ -350,6 +352,8 @@ namespace myastar_planner {
           }
 
 
+
+
          //add the neighbors that are not in the open list to the open list and mark the current cell as their parent
 
           addNeighborCellsToOpenList(openList, neighborsNotInOpenList, currentIndex, cpstart.gCost, cpgoal.index); //,tBreak);
@@ -364,6 +368,18 @@ namespace myastar_planner {
 
 
           //Para los nodos que ya están en abiertos, comprobar en cerrados su coste y actualizarlo si fuera necesario
+          for(uint i=0; i<neighborsInOpenList.size(); i++)
+          {
+            multiset<coupleOfCells>::iterator it = getPositionInList(openList,neighborsInOpenList[i]);
+            coupleOfCells updated = *it;
+            openList.erase(it);
+              updated.parent = currentIndex; //insert the parent cell
+              updated.gCost = COfCells.gCost + calculateHCost(currentIndex,neighborsInOpenList[i]);
+              updated.hCost = calculateHCost(neighborsInOpenList[i],cpgoal.index);
+              updated.fCost = updated.gCost + updated.hCost;
+            openList.insert(updated);
+          }
+
 
     }
 
@@ -465,7 +481,7 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
         * Description:it is used to find the free neighbors Cells of a the current Cell in the grid
         * Check Status: Checked by Anis, Imen and Sahar
       *********************************************************************************/
-      vector <unsigned int> MyastarPlanner::findNeighborCellJPS (unsigned int CellID,unsigned int parent){
+/*      vector <unsigned int> MyastarPlanner::findNeighborCellJPS (unsigned int CellID,unsigned int parent){
 
               if(parent!=0){
                 unsigned int mx, my;
@@ -540,26 +556,25 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
                 return neighbours;
             }
           return  findFreeNeighborCell(cellID);
-  }
+  }*/
   /*******************************************************************************/
   //Function Name: jump
   //Inputs:
   //Output:
   //Description:
   /*********************************************************************************/
-  bool MyastarPlanner::jump(int current_x,int current_y,int dx,int dy,unsigned int start,unsigned int end,unsigned int &node){
+  bool MyastarPlanner::jump(unsigned int current_x,unsigned int current_y,int dx,int dy,unsigned int start,unsigned int end,unsigned int &node){
 
-      int nextX = current_x + dx;
-      int nextY = current_y + dy;
+      unsigned int nextX = current_x + dx;
+      unsigned int nextY = current_y + dy;
       unsigned int next,curr;
-      costmap_->indexToCells(next, nextX, nextY);
-      costmap_->indexToCells(curr, current_x, current_y);
+      next = costmap_->getIndex(nextX, nextY);
+      curr = costmap_->getIndex(current_x, current_y);
 
       if(!isWalkable(nextX,nextY))
           return false;
       if(next == end){
         node = next;
-
         return true;
       }
 
@@ -567,18 +582,15 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
 
         if(!isWalkable(current_x + dx,current_y)){
           node = next;
-
           return true;
         }
         if(!isWalkable(current_x,current_y + dy)){
           node = next;
-
           return true;
         }
 
-        if( jump(nextX,nextY,dx,0,start,end,node) != NULL || jump(nextX,nextY,0,dy,start,end,node) != NULL ){
+        if( jump(nextX,nextY,dx,0,start,end,node) || jump(nextX,nextY,0,dy,start,end,node) ){
           node = next;
-
           return true;
         }
 
@@ -587,7 +599,6 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
           if(!isWalkable(current_x, current_y + 1)){
             if(isWalkable(current_x + dx ,current_y +1)){
               node = next;
-
               return true;
             }
           } else if(!isWalkable(current_x, current_y - 1)){
@@ -621,7 +632,7 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
   //Output: true or false
   //Description: it is used to check if a cell is walkable on the grid
   /*********************************************************************************/
-  bool MyastarPlanner::isWalkable(int x, int y){
+  bool MyastarPlanner::isWalkable(int x,int y){
     if((x>=0)&&(x< costmap_->getSizeInCellsX())&&(y>=0 )&&(y< costmap_->getSizeInCellsY()))
       if(costmap_->getCost(x,y) < 127)
         return true;
@@ -637,24 +648,24 @@ vector <unsigned int> MyastarPlanner::findFreeNeighborCell (unsigned int CellID)
 
 vector <unsigned int> MyastarPlanner::identifySuccessors (unsigned int CellID,unsigned int start,unsigned int end){
 
-  int c_x,c_y;
+  unsigned int c_x,c_y;
   costmap_->indexToCells(CellID,c_x,c_y);
 
   std::vector<unsigned int> neighbours = findFreeNeighborCell(CellID);
   std::vector<unsigned int> successors;
 
   for(int i=0;i<neighbours.size();i++){
-    int n_x,n_y;
+    unsigned int n_x,n_y;
     costmap_->indexToCells(neighbours[i], n_x, n_y);
 
     int dx = (n_x - c_x);
     int dy = (n_y - c_y);
 
-    coupleOfCells jump_point;
+    unsigned int jump_point;
 
     bool succed = jump(c_x,c_y,dx,dy,start,end,jump_point);
     if(succed)
-      successors.push_back(neighbours[i]);
+      successors.push_back(jump_point);
   }
   return successors;
 }
@@ -690,13 +701,12 @@ double MyastarPlanner::getMoveCost(unsigned int here, unsigned int there) {
 /*********************************************************************************/
 void MyastarPlanner::addNeighborCellsToOpenList(multiset<coupleOfCells> & OPL, vector <unsigned int> neighborCells, unsigned int parent, float gCostParent, unsigned int goalCell) //,float tBreak)
 {
-        vector <coupleOfCells> neighborsCellsOrdered;
         for(uint i=0; i< neighborCells.size(); i++)
         {
           coupleOfCells CP;
           CP.index=neighborCells[i]; //insert the neighbor cell
           CP.parent=parent; //insert the parent cell
-          CP.gCost = gCostParent;
+          CP.gCost = gCostParent + calculateHCost(parent,CP.index);
           CP.hCost = calculateHCost(CP.index,goalCell);
           CP.fCost = CP.gCost + CP.hCost;
           OPL.insert(CP);
