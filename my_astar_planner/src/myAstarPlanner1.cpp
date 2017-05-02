@@ -364,7 +364,17 @@ namespace myastar_planner {
 
 
           //Para los nodos que ya están en abiertos, comprobar en cerrados su coste y actualizarlo si fuera necesario
-
+          for(uint i=0; i<neighborsInOpenList.size(); i++)
+          {
+            multiset<coupleOfCells>::iterator it = getPositionInList(openList,neighborsInOpenList[i]);
+            coupleOfCells updated = *it;
+            openList.erase(it);
+              updated.parent = currentIndex; //insert the parent cell
+              updated.gCost = COfCells.gCost + calculateHCost(currentIndex,neighborsInOpenList[i]);
+              updated.hCost = calculateHCost(neighborsInOpenList[i],cpgoal.index);
+              updated.fCost = updated.gCost + updated.hCost;
+            openList.insert(updated);
+          }
     }
 
     if(openList.empty())  // if the openList is empty: then failure to find a path
@@ -493,7 +503,7 @@ void MyastarPlanner::addNeighborCellsToOpenList(multiset<coupleOfCells> & OPL, v
           coupleOfCells CP;
           CP.index=neighborCells[i]; //insert the neighbor cell
           CP.parent=parent; //insert the parent cell
-          CP.gCost = gCostParent;
+          CP.gCost = gCostParent + calculateHCost(parent,CP.index);
           CP.hCost = calculateHCost(CP.index,goalCell);
           CP.fCost = CP.gCost + CP.hCost;
           OPL.insert(CP);
