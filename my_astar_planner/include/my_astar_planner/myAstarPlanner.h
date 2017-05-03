@@ -88,7 +88,16 @@ struct coupleOfCells {
    return ( fCost > other.fCost );
  }
  bool operator == ( const coupleOfCells & other ) const {
-   return ( fCost == other.fCost );
+   return ( index == other.index );
+ }
+ coupleOfCells & operator = (const coupleOfCells & other){
+   if(this!=&other){
+     index=other.index;
+   	parent=other.parent;
+     gCost=other.gCost;
+   	hCost=other.hCost;
+   	fCost=other.fCost;
+   }
  }
 };
 
@@ -160,6 +169,14 @@ struct coupleOfCells {
 
       //devuelve celdas adyacentes a CellID que estén libres
       vector <unsigned int> findFreeNeighborCell (unsigned int CellID);
+      //vector <unsigned int> findNeighborCellJPS (unsigned int CellID);
+
+      //JPS
+      vector <unsigned int> identifySuccessors (unsigned int CellID,unsigned int start,unsigned int end);
+      bool isWalkable(int x, int y);
+      bool jump(unsigned int current_x,unsigned int current_y,int dx,int dy,unsigned int start,unsigned int end,unsigned int &node);
+
+
 
       /*******************************************************************************/
       //Function Name: addNeighborCellsToOpenList

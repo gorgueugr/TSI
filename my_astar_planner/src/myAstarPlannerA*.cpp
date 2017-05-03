@@ -266,12 +266,12 @@ namespace myastar_planner {
               unsigned int currentParent = COfCells.parent;
               ROS_INFO("Inserta en Plan GOAL: %f, %f PADRE: %u", pose.pose.position.x, pose.pose.position.y, currentParent);
               //ros::Duration(1).sleep();
-
+              //std::vector<unsigned int> planID;
               while (currentParent != cpstart.index) //e.d. mientras no lleguemos al nodo start
               {
                 //encontramos la posición de currentParent en cerrados
                 multiset<coupleOfCells>::iterator it=getPositionInList(closedList,currentParent);
-
+                //planID.push_back(currentParent);
                 //hacemos esa posición que sea el currentCouple
                 coupleOfCells currentCouple;
                 currentCouple.index=currentParent;
@@ -315,8 +315,10 @@ namespace myastar_planner {
             ROS_INFO("Sale del bucle de generación del plan.");
             std::reverse(plan.begin(),plan.end());
 
+            //visualizaLista(marker_Goals_publisher, markers_Goals, planID);
+            //planID.clear();
             //lo publica en el topic "planTotal"
-            //publishPlan(plan);
+            publishPlan(plan);
             return true;
           }
 
@@ -328,13 +330,16 @@ namespace myastar_planner {
 
           //neighbors that exist in the closedList are ignored
           vector <unsigned int> neighborNotInClosedList;
+          //vector <unsigned int> neighborInClosedList;
           for(uint i=0; i<neighborCells.size(); i++)
           {
             if(!isContains(closedList,neighborCells[i]))
             {
               neighborNotInClosedList.push_back(neighborCells[i]);
-            }
+            }//else
+            //neighborInClosedList.push_back(neighborCells[i]);
           }
+
           ROS_INFO("Ha encontrado %u vecinos que no están en cerrados", (unsigned int)neighborNotInClosedList.size());
 
 
@@ -354,6 +359,20 @@ namespace myastar_planner {
 
           addNeighborCellsToOpenList(openList, neighborsNotInOpenList, currentIndex, cpstart.gCost, cpgoal.index); //,tBreak);
 
+          for(uint i=0; i<neighborsInOpenList.size(); i++)
+          {
+            multiset<coupleOfCells>::iterator it = getPositionInList(openList,neighborsInOpenList[i]);
+            coupleOfCells updated = *it;
+            openList.erase(it);
+            if(updated.gCost >= (COfCells.gCost + calculateHCost(currentIndex,neighborsInOpenList[i]))){
+              updated.index =  neighborsInOpenList[i];
+              updated.parent = currentIndex; //insert the parent cell
+              updated.gCost = COfCells.gCost + calculateHCost(currentIndex,neighborsInOpenList[i]);
+              updated.hCost = calculateHCost(neighborsInOpenList[i],cpgoal.index);
+              updated.fCost = updated.gCost + updated.hCost;
+            }
+            openList.insert(updated);
+          }
 
          explorados++;
 
@@ -361,20 +380,13 @@ namespace myastar_planner {
          //Anyadir neighborCells a points. pushback()
          visualizaLista(marker_Open_publisher, markers_OpenList, neighborsNotInOpenList);
          visualizaCelda(marker_Closed_publisher,markers_ClosedList, COfCells.index);
-
-
-          //Para los nodos que ya están en abiertos, comprobar en cerrados su coste y actualizarlo si fuera necesario
-          for(uint i=0; i<neighborsInOpenList.size(); i++)
-          {
-            multiset<coupleOfCells>::iterator it = getPositionInList(openList,neighborsInOpenList[i]);
-            coupleOfCells updated = *it;
-            openList.erase(it);
-              updated.parent = currentIndex; //insert the parent cell
-              updated.gCost = COfCells.gCost + calculateHCost(currentIndex,neighborsInOpenList[i]);
-              updated.hCost = calculateHCost(neighborsInOpenList[i],cpgoal.index);
-              updated.fCost = updated.gCost + updated.hCost;
-            openList.insert(updated);
-          }
+         /*
+         if a node with the same position as successor is in the OPEN list \
+            which has a lower f than successor, skip this successor
+        if a node with the same position as successor is in the CLOSED list \
+            which has a lower f than successor, skip this successor
+        otherwise, add the node to the open list
+        */
     }
 
     if(openList.empty())  // if the openList is empty: then failure to find a path
@@ -400,9 +412,9 @@ double MyastarPlanner::calculateHCost(unsigned int start, unsigned int goal) {
   costmap_->indexToCells(goal, mgoal_x, mgoal_y);
   costmap_->mapToWorld(mgoal_x, mgoal_y, wgoal_x, wgoal_y);
   //Euclidea
-  return sqrt((pow(wstart_x - wgoal_x,2))+pow(wstart_y - wgoal_y, 2));
+  //return sqrt((pow(wstart_x - wgoal_x,2))+pow(wstart_y - wgoal_y, 2));
   //Manhattan
-  //return abs(wgoal_x - wstart_x) + abs(wgoal_y - wstart_y);
+  return (double) abs(wstart_x - wgoal_x) + abs(wstart_y - wgoal_y);
  }
 
 
@@ -635,6 +647,21 @@ void MyastarPlanner::visualizaCelda(ros::Publisher where, visualization_msgs::Ma
     }
     marker.points.clear();
 
+ }
 
+ void MyastarPlanner::publishPlan(const std::vector<geometry_msgs::PoseStamped>& path) {
+   if (!initialized_) {
+     ROS_ERROR( "This planner has not been initialized yet, but it is being used, please call initialize() before use"); return;
+   } //create a message for the plan
+    nav_msgs::Path gui_path;
+    gui_path.poses.resize(path.size());
+    if (!path.empty()) {
+      gui_path.header.frame_id = path[0].header.frame_id;
+      gui_path.header.stamp = path[0].header.stamp;
+   } // Extract the plan in world co-ordinates, we assume the path is all in the same frame
+   for (unsigned int i = 0; i < path.size(); i++) {
+     gui_path.poses[i] = path[i];
+   }
+     plan_pub_.publish(gui_path);
  }
 }
