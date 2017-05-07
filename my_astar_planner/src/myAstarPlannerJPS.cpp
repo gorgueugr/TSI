@@ -51,8 +51,6 @@
 
 
 
-
-
 //register this planner as a BaseGlobalPlanner plugin
 PLUGINLIB_EXPORT_CLASS(myastar_planner::MyastarPlanner, nav_core::BaseGlobalPlanner)
 
@@ -125,8 +123,6 @@ namespace myastar_planner {
     }
 
     ROS_DEBUG("MyastarPlanner: Got a start: %.2f, %.2f, and a goal: %.2f, %.2f", start.pose.position.x, start.pose.position.y, goal.pose.position.x, goal.pose.position.y);
-
-    ros::Time begin=ros::Time::now();
 
     plan.clear();
     closedList.clear();
@@ -325,7 +321,7 @@ namespace myastar_planner {
                 currentParent = (*it).parent;
               }
 
-              distance += calculateHCost(currentCouple.index,cpstart.index);
+              distance += calculateHCost(currentParent,cpstart.index);
 
               geometry_msgs::PoseStamped start;
               start.header.stamp =  ros::Time::now();
@@ -340,17 +336,12 @@ namespace myastar_planner {
 
               //lo añadimos al plan
               plan.push_back(start);
-              ros::Time end=ros::Time::now();
-
             ROS_INFO("Sale del bucle de generación del plan.");
             std::reverse(plan.begin(),plan.end());
             ROS_INFO("Num nodos en abiertos: %d", openList.size() );
             ROS_INFO("Num nodos en cerrados: %d", closedList.size() );
             ROS_INFO("Num nodos en PATH: %d", plan.size() );
             ROS_INFO("Distancia del PATH: %f", distance );
-            ros::Duration diff=end-begin;
-            double t =diff.toSec();
-            ROS_INFO("Time: =  %f", t);
 
 
             //lo publica en el topic "planTotal"

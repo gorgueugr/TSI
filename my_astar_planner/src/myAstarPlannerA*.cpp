@@ -127,6 +127,9 @@ namespace myastar_planner {
     closedList.clear();
     openList.clear();
 
+    ros::Time begin=ros::Time::now();
+
+
     //obtenemos el costmap global  que está publicado por move_base.
     costmap_ = costmap_ros_->getCostmap();
 
@@ -330,9 +333,11 @@ namespace myastar_planner {
 
               //lo añadimos al plan
               plan.push_back(start);
+              ros::Time end=ros::Time::now();
 
             ROS_INFO("Sale del bucle de generación del plan.");
             std::reverse(plan.begin(),plan.end());
+
 
             //visualizaLista(marker_Goals_publisher, markers_Goals, planID);
             //planID.clear();
@@ -341,6 +346,9 @@ namespace myastar_planner {
             ROS_INFO("Num nodos en cerrados: %d", closedList.size() );
             ROS_INFO("Num nodos en PATH: %d", plan.size() );
             ROS_INFO("Distancia del PATH: %f", distance );
+            ros::Duration diff=end-begin;
+            double t =diff.toSec();
+            ROS_INFO("Time: =  %f", t);
 
             publishPlan(plan);
             return true;
