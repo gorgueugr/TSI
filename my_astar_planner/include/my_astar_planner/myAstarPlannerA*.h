@@ -145,8 +145,8 @@ coupleOfCells & operator = (const coupleOfCells & other){
 
 
       //necesarios para manejar las listas de abiertos y cerrados de astar.
-      multiset<coupleOfCells , less< coupleOfCells > > openList; //!< the open list: it contains all the expanded cells (current cells)
-	     multiset<coupleOfCells, less< coupleOfCells > > closedList; //!< the closed list: contains the explored cells
+      list<coupleOfCells , less< coupleOfCells > > openList; //!< the open list: it contains all the expanded cells (current cells)
+	     list<coupleOfCells, less< coupleOfCells > > closedList; //!< the closed list: contains the explored cells
 
       /**
        * @brief  Checks the legality of the robot footprint at a position and orientation using the world model
@@ -177,7 +177,7 @@ coupleOfCells & operator = (const coupleOfCells & other){
       //Output: the open list updated
       //Description: it is used to add the neighbor Cells to the open list
       /*********************************************************************************/
-      void addNeighborCellsToOpenList(multiset<coupleOfCells> & OPL, vector <unsigned int> neighborCells, unsigned int parent, float gCostParent, unsigned int goalCell);
+      void addNeighborCellsToOpenList(list<coupleOfCells> & OPL, vector <unsigned int> neighborCells, unsigned int parent, float gCostParent, unsigned int goalCell);
 
       //devuelve elcosto de moverse desde una casilla "here" hasta otra casilla "there"
       double getMoveCost(unsigned int here, unsigned int there);
