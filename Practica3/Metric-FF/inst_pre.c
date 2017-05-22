@@ -8,34 +8,34 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *********************************************************************/
 
 
 
 
 /*
- * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND, 
- * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH 
- * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL 
+ * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND,
+ * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH
+ * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL
  * WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
  * ANY WARRANTIES OR NON INFRINGEMENT.  THE USER ASSUMES ALL LIABILITY AND
  * RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR
- * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR 
- * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the 
+ * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR
+ * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the
  * generality of the foregoing, neither the author, nor JAIR, nor JAIR's
- * publishers and distributors, warrant that the Source Code will be 
- * error-free, will operate without interruption, or will meet the needs 
+ * publishers and distributors, warrant that the Source Code will be
+ * error-free, will operate without interruption, or will meet the needs
  * of the user.
  */
 
@@ -60,12 +60,12 @@
  *              - negative preconditions translation
  *              - split operators into easy and hard to instantiate
  *
- *              - full DNF functions, only feasible for fully instantiated 
+ *              - full DNF functions, only feasible for fully instantiated
  *                formulae
  *
  * Author: Joerg Hoffmann 2000
  *
- *********************************************************************/ 
+ *********************************************************************/
 
 
 
@@ -179,13 +179,13 @@ void encode_domain_in_integers( void )
       print_Fluent( &(gfull_fluents_initial[i].fluent) );
       printf(": %f", gfull_fluents_initial[i].value);
     }
-    
+
     printf("\n\nfirst step operators are:");
     for ( i = 0; i < gnum_operators; i++ ) {
       print_Operator( goperators[i] );
     }
     printf("\n\n");
-    
+
     printf("\n\nfirst step goal is:\n");
     print_Wff( ggoal, 0 );
     fflush( stdout );
@@ -251,17 +251,17 @@ void collect_all_strings( void )
 	printf("\ntoo many consts in type %s! increase MAX_TYPE (currently %d)\n\n",
 	       gtype_names[0], MAX_TYPE);
 	exit( 1 );
-      }     
+      }
       gtype_consts[0][gtype_size[0]++] = c_num;
       gis_member[c_num][0] = TRUE;
     }
-    
+
     if ( !gis_member[c_num][type_num] ) {
       if ( gtype_size[type_num] == MAX_TYPE ) {
 	printf("\ntoo many consts in type %s! increase MAX_TYPE (currently %d)\n\n",
 	       gtype_names[type_num], MAX_TYPE);
 	exit( 1 );
-      }     
+      }
       gtype_consts[type_num][gtype_size[type_num]++] = c_num;
       gis_member[c_num][type_num] = TRUE;
     }
@@ -291,7 +291,7 @@ void collect_all_strings( void )
     ar = 0;
     for ( t = f->item->next; t; t = t->next ) {
       if ( (type_num = position_in_types_table( t->item )) == -1 ) {
-	printf("\npredicate %s is declared to use unknown or empty type %s\n\n", 
+	printf("\npredicate %s is declared to use unknown or empty type %s\n\n",
 	       f->item->item, t->item);
 	exit( 1 );
       }
@@ -329,7 +329,7 @@ void collect_all_strings( void )
     ar = 0;
     for ( t = f->item->next; t; t = t->next ) {
       if ( (type_num = position_in_types_table( t->item )) == -1 ) {
-	printf("\nfunction %s is declared to use unknown or empty type %s\n\n", 
+	printf("\nfunction %s is declared to use unknown or empty type %s\n\n",
 	       f->item->item, t->item);
 	exit( 1 );
       }
@@ -360,7 +360,7 @@ int position_in_types_table( char *str )
   /* start at 1 because 0 is our artificial one
    */
   for ( i = 1; i < gnum_types; i++ ) {
-    if ( str == gtype_names[i] || 
+    if ( str == gtype_names[i] ||
 	 (strcmp( str, gtype_names[i] ) == SAME) ) {
       break;
     }
@@ -379,7 +379,7 @@ int position_in_constants_table( char *str )
   int i;
 
   for ( i=0; i<gnum_constants; i++ ) {
-    if ( str == gconstants[i] || 
+    if ( str == gconstants[i] ||
 	 strcmp( str, gconstants[i] ) == SAME ) {
       break;
     }
@@ -398,7 +398,7 @@ int position_in_predicates_table( char *str )
   int i;
 
   for ( i = 0; i < gnum_predicates; i++ ) {
-    if ( str == gpredicates[i] || 
+    if ( str == gpredicates[i] ||
 	 strcmp( str, gpredicates[i] ) == SAME ) {
       break;
     }
@@ -417,7 +417,7 @@ int position_in_functions_table( char *str )
   int i;
 
   for ( i=0; i<gnum_functions; i++ ) {
-    if ( str == gfunctions[i] || 
+    if ( str == gfunctions[i] ||
 	 strcmp( str, gfunctions[i] ) == SAME ) {
       break;
     }
@@ -445,7 +445,7 @@ void create_integer_representation( void )
     for ( n = gorig_initial_facts->sons; n; n = n->next ) sum++;
     sum += gnum_constants;/* space for equalities */
     gfull_initial = ( Fact * ) calloc( sum, sizeof( Fact ) );
-    gfull_fluents_initial = ( FluentValue * ) 
+    gfull_fluents_initial = ( FluentValue * )
       calloc( sum, sizeof( FluentValue ));
 
     for ( n = gorig_initial_facts->sons; n; n = n->next ) {
@@ -459,7 +459,7 @@ void create_integer_representation( void )
       } else {
 	/* a fluent value assignment
 	 */
-	make_Fluent( &(gfull_fluents_initial[gnum_full_fluents_initial].fluent), 
+	make_Fluent( &(gfull_fluents_initial[gnum_full_fluents_initial].fluent),
 		     n->lh->atom, 0 );
 	gfull_fluents_initial[gnum_full_fluents_initial].value =
 	  ( float ) strtod( n->rh->atom->item, NULL);
@@ -486,22 +486,23 @@ void create_integer_representation( void )
   if ( gparse_metric != NULL ) {
     if ( !gcmd_line.optimize ) {
       if ( gcmd_line.display_info ) {
-	printf("\n\nno optimization required. skipping criterion.\n\n");
+        printf("\n\nno optimization required. skipping criterion.\n\n");
       }
     } else {
       gmetric = make_ExpNode( gparse_metric, 0 );
+      strcpy( gparse_optimization, "MINIMIZE" );
       if ( strcmp( gparse_optimization, "MINIMIZE" ) != SAME &&
-	   strcmp( gparse_optimization, "MAXIMIZE" ) != SAME ) {
-	if ( gcmd_line.display_info ) {
-	  printf("\n\nunknown optimization method %s. check input files\n\n", 
-		 gparse_optimization);
-	}
-	exit( 1 );
+      strcmp( gparse_optimization, "MAXIMIZE" ) != SAME ) {
+        if ( gcmd_line.display_info ) {
+          printf("\n\nunknown optimization method %s. check input files\n\n",
+          gparse_optimization);
+        }
+        exit( 1 );
       }
       if ( strcmp( gparse_optimization, "MAXIMIZE" ) == SAME ) {
-	t = new_ExpNode( MINUS );
-	t->son = gmetric;
-	gmetric = t;
+        t = new_ExpNode( MINUS );
+        t->son = gmetric;
+        gmetric = t;
       }
     }
   }
@@ -629,7 +630,7 @@ void make_Fact( Fact *f, PlNode *n, int num_vars )
       }
       f->args[m] = ENCODE_VAR( i );
     } else {
-      if ( (f->args[m] = 
+      if ( (f->args[m] =
 	    position_in_constants_table( t->item )) == -1 ) {
 	printf("\nunknown constant %s in literal %s. check input files\n\n",
 	       t->item, n->atom->item);
@@ -700,7 +701,7 @@ void make_Fluent( Fluent *f, TokenList *atom, int num_vars )
       }
       f->args[m] = ENCODE_VAR( i );
     } else {
-      if ( (f->args[m] = 
+      if ( (f->args[m] =
 	    position_in_constants_table( t->item )) == -1 ) {
 	printf("\nunknown constant %s in function %s. check input files\n\n",
 	       t->item, atom->item);
@@ -873,12 +874,12 @@ Effect *make_effect( PlNode *p, int num_vars )
   PlNode *n, *m;
   int t, i;
 
-  for ( n = p; n && n->connective == ALL; n = n->sons ) { 
+  for ( n = p; n && n->connective == ALL; n = n->sons ) {
     if ( (t = position_in_types_table( n->atom->next->item )) == -1 ) {
-      printf("\nwarning: effect parameter %s has unknown or empty type %s. skipping effect.\n\n", 
-	     n->atom->item, n->atom->next->item); 
-      return NULL; 
-    } 
+      printf("\nwarning: effect parameter %s has unknown or empty type %s. skipping effect.\n\n",
+	     n->atom->item, n->atom->next->item);
+      return NULL;
+    }
     for ( i = 0; i < num_vars + tmp->num_vars; i++ ) {
       if ( lvar_names[i] == n->atom->item ||
 	   strcmp( lvar_names[i], n->atom->item ) == SAME ) {
@@ -886,11 +887,11 @@ Effect *make_effect( PlNode *p, int num_vars )
 	       n->atom->item);
       }
     }
-    lvar_types[num_vars + tmp->num_vars] = t; 
-    lvar_names[num_vars + tmp->num_vars] = n->atom->item; 
-    tmp->var_names[tmp->num_vars] = new_Token( strlen( n->atom->item ) + 1 ); 
+    lvar_types[num_vars + tmp->num_vars] = t;
+    lvar_names[num_vars + tmp->num_vars] = n->atom->item;
+    tmp->var_names[tmp->num_vars] = new_Token( strlen( n->atom->item ) + 1 );
     strcpy( tmp->var_names[tmp->num_vars], n->atom->item );
-    tmp->var_types[tmp->num_vars++] = t; 
+    tmp->var_types[tmp->num_vars++] = t;
   }
 
   if ( !n || n->connective != WHEN ) {
@@ -1102,14 +1103,14 @@ void collect_inertia_information( void )
   for ( i = 0; i < gnum_operators; i++ ) {
     for ( e = goperators[i]->effects; e; e = e->next ) {
       for ( l = e->effects; l; l = l->next ) {
-	if ( l->negated ) {
-	  gis_deleted[l->fact.predicate] = TRUE;
-	} else {
-	  gis_added[l->fact.predicate] = TRUE;
-	}
+        if ( l->negated ) {
+          gis_deleted[l->fact.predicate] = TRUE;
+        } else {
+          gis_added[l->fact.predicate] = TRUE;
+        }
       }
       for ( ne = e->numeric_effects; ne; ne = ne->next ) {
-	gis_changed[ne->fluent.function] = TRUE;
+        gis_changed[ne->fluent.function] = TRUE;
       }
     }
   }
@@ -1152,7 +1153,7 @@ void split_initial_state( void )
       gnum_types++;
     }
   }
-     
+
 
   /* double size of predicates table as each predicate might need
    * to be translated to NOT-p
@@ -1209,7 +1210,7 @@ void split_initial_state( void )
     }
   }
 
-  ginitial_function = ( FluentValue ** ) 
+  ginitial_function = ( FluentValue ** )
     calloc( gnum_functions, sizeof( FluentValue * ) );
   gnum_initial_function = ( int * ) calloc( gnum_functions, sizeof( int ) );
   for ( i = 0; i < gnum_functions; i++ ) {
@@ -1220,7 +1221,7 @@ void split_initial_state( void )
     gnum_initial_function[p]++;
   }
   for ( i = 0; i < gnum_functions; i++ ) {
-    ginitial_function[i] = ( FluentValue * ) 
+    ginitial_function[i] = ( FluentValue * )
       calloc( gnum_initial_function[i], sizeof( FluentValue ) );
     gnum_initial_function[i] = 0;
   }
@@ -1231,7 +1232,7 @@ void split_initial_state( void )
     p = gfull_fluents_initial[i].fluent.function;
     ginitial_function[p][gnum_initial_function[p]].fluent.function = p;
     for ( j = 0; j < gf_arity[p]; j++ ) {
-      ginitial_function[p][gnum_initial_function[p]].fluent.args[j] = 
+      ginitial_function[p][gnum_initial_function[p]].fluent.args[j] =
 	gfull_fluents_initial[i].fluent.args[j];
     }
     ginitial_function[p][gnum_initial_function[p]].value =
@@ -1872,7 +1873,7 @@ void simplify_exp( ExpNode **n )
     }
     if ( (*n)->rightson->value == 0 ) {
       /* kind of unclean: simply leave that in here;
-       * we will later determine the right thing 
+       * we will later determine the right thing
        * to do with it.
        */
       break;
@@ -1891,7 +1892,7 @@ void simplify_exp( ExpNode **n )
     (*n)->value = ((float) (-1)) * (*n)->son->value;
     free_ExpNode( (*n)->son );
     (*n)->son = NULL;
-    break;    
+    break;
   case NUMBER:
     break;
   case FHEAD:
@@ -2125,7 +2126,7 @@ void replace_var_with_const_in_exp( ExpNode **n, int var, int constant )
     }
     if ( (*n)->rightson->value == 0 ) {
       /* kind of unclean: simply leave that in here;
-       * we will later determine the right thing 
+       * we will later determine the right thing
        * to do with it.
        */
       break;
@@ -2144,7 +2145,7 @@ void replace_var_with_const_in_exp( ExpNode **n, int var, int constant )
     (*n)->value = ((float) (-1)) * (*n)->son->value;
     free_ExpNode( (*n)->son );
     (*n)->son = NULL;
-    break;    
+    break;
   case NUMBER:
     break;
   case FHEAD:
@@ -2563,7 +2564,7 @@ void NOTs_down_in_wff( WffNode **w )
   case AND:
   case OR:
     for ( i = (*w)->sons; i; i = i->next ) {
-      NOTs_down_in_wff( &i ); 
+      NOTs_down_in_wff( &i );
     }
     break;
   case NOT:
@@ -2630,7 +2631,7 @@ void NOTs_down_in_wff( WffNode **w )
 	  (*w)->comp = LEQ;
 	  break;
 	default:
-	  printf("\n\nillegal comparator not EQ %d in nots down", 
+	  printf("\n\nillegal comparator not EQ %d in nots down",
 		 (*w)->son->comp);
 	  exit( 1 );
 	}
@@ -2704,7 +2705,7 @@ void translate_negative_preconds( void )
   FluentValues *ff;
 
   while ( translate_one_negative_cond( ggoal ) );
-  
+
   for ( i = 0; i < gnum_operators; i++ ) {
     while ( translate_one_negative_cond( goperators[i]->preconds ) );
 
@@ -2819,7 +2820,7 @@ Bool translate_one_negative_cond( WffNode *w )
   sprintf( gpredicates[gnum_predicates], "NOT-%s", gpredicates[p] );
   garity[gnum_predicates] = garity[p];
   for ( j = 0; j < garity[p]; j++ ) {
-    gpredicates_args_type[gnum_predicates][j] = 
+    gpredicates_args_type[gnum_predicates][j] =
       gpredicates_args_type[p][j];
   }
   gis_added[gnum_predicates] = FALSE;
@@ -2835,11 +2836,11 @@ Bool translate_one_negative_cond( WffNode *w )
   replace_not_p_with_n_in_wff( p, gnum_predicates - 1, &ggoal );
 
   for ( j = 0; j < gnum_operators; j++ ) {
-    replace_not_p_with_n_in_wff( p, gnum_predicates - 1, 
+    replace_not_p_with_n_in_wff( p, gnum_predicates - 1,
 				 &(goperators[j]->preconds) );
 
     for ( e = goperators[j]->effects; e; e = e->next ) {
-      replace_not_p_with_n_in_wff( p, gnum_predicates - 1, 
+      replace_not_p_with_n_in_wff( p, gnum_predicates - 1,
 				   &(e->conditions) );
       for ( l = e->effects; l; l = l->next ) {
 	if ( l->fact.predicate != p ) {
@@ -3026,7 +3027,7 @@ void split_domain( void )
   }
 
   ghard_operators = ( Operator_pointer * ) calloc( MAX_OPERATORS, sizeof( Operator ) );
-  gnum_hard_operators = 0; 
+  gnum_hard_operators = 0;
   geasy_operators = ( NormOperator_pointer * ) calloc( s, sizeof( NormOperator_pointer ) );
   gnum_easy_operators = 0;
 
@@ -3093,7 +3094,7 @@ void split_domain( void )
       break;
     case AND:
       tmp_op = new_NormOperator( goperators[i] );
-      m = 0; 
+      m = 0;
       mn = 0;
       for ( ww = w->sons; ww; ww = ww->next ) {
 	if ( ww->connective == ATOM ) m++;
@@ -3161,7 +3162,7 @@ void split_domain( void )
 
   if ( gcmd_line.display_info == 109 ) {
     printf("\n\nsplitted operators are:\n");
-    
+
     printf("\nEASY:\n");
     for ( i = 0; i < gnum_easy_operators; i++ ) {
       print_NormOperator( geasy_operators[i] );
@@ -3171,7 +3172,7 @@ void split_domain( void )
     for ( i = 0; i < gnum_hard_operators; i++ ) {
       print_Operator( ghard_operators[i] );
     }
-  } 
+  }
 
 }
 
@@ -3445,7 +3446,7 @@ void make_normal_effects( NormOperator **nop, Operator *op )
 	(*nop)->effects->prev = tmp_ef;
       }
       (*nop)->effects = tmp_ef;
-      break;     
+      break;
     case COMP:
       tmp_ef = new_NormEffect1( e );
       tmp_ef->numeric_conditions_comp = ( Comparator * ) calloc( 1, sizeof( Comparator ) );
@@ -3583,7 +3584,7 @@ void dnf( WffNode **w )
   static Bool first_call = TRUE;
 
   if ( first_call ) {
-    lset = ( WffNode_pointer * ) 
+    lset = ( WffNode_pointer * )
       calloc( MAX_HITTING_SET_DEFAULT, sizeof( WffNode_pointer ) );
     lmax_set = MAX_HITTING_SET_DEFAULT;
     first_call = FALSE;
@@ -3625,9 +3626,9 @@ void ANDs_below_ORs_in_wff( WffNode **w )
       break;
     }
     /* crucial part: AND node, sons can be merged OR's.
-     * (i.e., sons are either literals or disjunctions of 
+     * (i.e., sons are either literals or disjunctions of
      * conjunctions of literals)
-     * create OR node with one hitting set of w's sons for 
+     * create OR node with one hitting set of w's sons for
      * each disjunct
      */
     lhitting_sets = NULL;
@@ -3771,12 +3772,3 @@ void merge_next_step_ANDs_and_ORs_in_wff( WffNode **w )
 /* 	   (*w)->connective); */
 /*     exit( 1 ); */
 /*   } */
-
-
-
-
-
-
-
-
-

@@ -8,34 +8,34 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *********************************************************************/
 
 
 
 
 /*
- * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND, 
- * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH 
- * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL 
+ * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND,
+ * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH
+ * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL
  * WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
  * ANY WARRANTIES OR NON INFRINGEMENT.  THE USER ASSUMES ALL LIABILITY AND
  * RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR
- * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR 
- * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the 
+ * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR
+ * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the
  * generality of the foregoing, neither the author, nor JAIR, nor JAIR's
- * publishers and distributors, warrant that the Source Code will be 
- * error-free, will operate without interruption, or will meet the needs 
+ * publishers and distributors, warrant that the Source Code will be
+ * error-free, will operate without interruption, or will meet the needs
  * of the user.
  */
 
@@ -62,7 +62,7 @@
  *
  * Author: Joerg Hoffmann 2001
  *
- *********************************************************************/ 
+ *********************************************************************/
 
 
 
@@ -126,7 +126,7 @@ Bool lchanged_ehc_entry[EHC_HASH_SIZE];
 
 
 
-/* memory (hash table) for states that are already 
+/* memory (hash table) for states that are already
  * encountered by current serial plan
  */
 PlanHashEntry_pointer lplan_hash_entry[PLAN_HASH_SIZE];
@@ -188,17 +188,17 @@ Bool do_enforced_hill_climbing( void )
     lplan_hash_entry[i] = NULL;
   }
   hash_plan_state( &ginitial_state, 0 );
-  
+
   lehc_space_head = new_EhcNode();
   lehc_space_end = lehc_space_head;
-  
+
   for ( i = 0; i < EHC_HASH_SIZE; i++ ) {
     lehc_hash_entry[i] = NULL;
     lnum_ehc_hash_entry[i] = 0;
     lchanged_ehc_entry[i] = FALSE;
   }
   lnum_changed_ehc_entrys = 0;
-  
+
   /* start enforced Hill-climbing
    */
   lH = TRUE;
@@ -211,7 +211,7 @@ Bool do_enforced_hill_climbing( void )
   }
   if ( h == 0 ) {
     return TRUE;
-  }  
+  }
   if ( gcmd_line.display_info ) {
     printf("\n\nCueing down from goal distance: %4d into depth ", h);
   }
@@ -307,7 +307,7 @@ Bool search_for_better_state( State *S, int h, State *S_, int *h_ )
 
   lehc_current_start = lehc_space_head->next;
 
-  while ( TRUE ) {  
+  while ( TRUE ) {
     if ( lehc_current_start == lehc_current_end ) {
       reset_ehc_hash_entrys();
       free( tmp );
@@ -395,7 +395,7 @@ int expand_first_node( int h )
     h_ = get_1P_and_H( &(lehc_current_start->S) );
   } else {
      h_ = get_1P_and_A( &(lehc_current_start->S) );
-  }   
+  }
 
   if ( h_ == INFINITY ) {
     lehc_current_start = lehc_current_start->next;
@@ -419,7 +419,7 @@ int expand_first_node( int h )
       }
     }
   }
-    
+
   lehc_current_start = lehc_current_start->next;
 
   return h_;
@@ -514,7 +514,7 @@ void hash_ehc_node( EhcNode *n )
     lchanged_ehc_entry[index] = TRUE;
   }
   return;
-      
+
 }
 
 
@@ -575,7 +575,7 @@ Bool superior_ehc_state_hashed( State *S )
 
 
 
-Bool superior_state( State *S1, State *S2 ) 
+Bool superior_state( State *S1, State *S2 )
 
 {
 
@@ -592,7 +592,7 @@ Bool superior_state( State *S1, State *S2 )
 	return FALSE;
       }
     }
-    
+
     /* check whether the fluent values are superior.
      * see JAIR article for explanation / justification
      */
@@ -600,11 +600,11 @@ Bool superior_state( State *S1, State *S2 )
       if ( !gfl_conn[i].relevant ) {
 	continue;
       }
-      
+
       if ( !S2->f_D[i] ) {
 	continue;
       }
-      
+
       if ( !S1->f_D[i] ||
 	   S2->f_V[i] > S1->f_V[i] ) {
 	return FALSE;
@@ -627,7 +627,7 @@ Bool superior_state( State *S1, State *S2 )
     for ( i = 0; i < gnum_real_fl_conn; i++ ) {
       if ( !gfl_conn[i].relevant ) {
 	continue;
-      }      
+      }
       if ( S2->f_D[i] != S1->f_D[i]  ) {
 	return FALSE;
       }
@@ -786,9 +786,9 @@ PlanHashEntry *hash_plan_state( State *S, int step )
   return tmp;
 
 }
-  
 
- 
+
+
 PlanHashEntry *plan_state_hashed( State *S )
 
 {
@@ -814,7 +814,7 @@ PlanHashEntry *plan_state_hashed( State *S )
 
 
 
-Bool same_state( State *S1, State *S2 ) 
+Bool same_state( State *S1, State *S2 )
 
 {
 
@@ -874,6 +874,19 @@ Bool same_state( State *S1, State *S2 )
 
 
 
+void deleteLine(){
+  /* se sube una linea */
+  putchar(27);
+  putchar('[');
+  putchar('1');
+  putchar('A');
+
+  /* borra toda la linea */
+  putchar(27);
+  putchar('[');
+  putchar('2');
+  putchar('K');
+}
 
 
 
@@ -882,180 +895,199 @@ Bool do_best_first_search( void )
 
 {
 
-  BfsNode *first;
-  State S;
-  int i, min = INFINITY;
-  Bool start = TRUE;
+ BfsNode *first;
+ State S;
+ int i, min = INFINITY;
+ float min_gc = INFINITY;
+ Bool inicio = TRUE;
+ struct tms start, end;   
+ gsearch_time = 0;
+ times(&start);
 
-  make_state( &S, gnum_ft_conn, gnum_fl_conn );
+ make_state( &S, gnum_ft_conn, gnum_fl_conn );
 
-  lbfs_space_head = new_BfsNode();
-  lbfs_space_had = NULL;
+ lbfs_space_head = new_BfsNode();
+ lbfs_space_had = NULL;
 
-  for ( i = 0; i < BFS_HASH_SIZE; i++ ) {
-    lbfs_hash_entry[i] = NULL;
-  }
+ for ( i = 0; i < BFS_HASH_SIZE; i++ ) {
+   lbfs_hash_entry[i] = NULL;
+ }
 
-  add_to_bfs_space( &ginitial_state, -1, NULL );
+ add_to_bfs_space( &ginitial_state, -1, NULL );
 
-  while ( TRUE ) {
-    if ( (first = lbfs_space_head->next) == NULL ) {
-      if ( gcmd_line.display_info ) {
-	printf("\n\nbest first search space empty! problem proven unsolvable.\n\n");
-      }
-      return FALSE;
-    }
+ while ( TRUE ) {
+   if ( (first = lbfs_space_head->next) == NULL ) {
+     if ( gcmd_line.display_info ) {
+       printf("\n\nbest first search space empty! problem proven unsolvable.\n\n");
+     }
+     return FALSE;
+   }
 
-    lbfs_space_head->next = first->next;
-    if ( first->next ) {
-      first->next->prev = lbfs_space_head;
-    }
+   lbfs_space_head->next = first->next;
+   if ( first->next ) {
+     first->next->prev = lbfs_space_head;
+   }
 
-    if ( LESS( first->h, min ) ) {
-      min = first->h;
-      if ( start ) {
-	if ( gcmd_line.display_info ) {
-	  printf("\n\nadvancing to distance: %4d", min);
-	  fflush(stdout);
-	}
-	start = FALSE;
-      } else {
-	if ( gcmd_line.display_info ) {
-	  printf("\n                       %4d", min);
-	  fflush(stdout);
-	}
-      }
-    }
+   float aux= state_cost(&S, first);
+   times(&end);
+   TIME(gsearch_time);
+   if ( LESS( first->h, min ) || (aux < min_gc)) {
+     if (LESS( first->h, min )) {min = first->h; min_gc = aux; gcmd_line.display_info=1;}
+     if (aux < min_gc) {min_gc = aux; gcmd_line.display_info=1;}
+     if ( inicio ) {
+       if ( gcmd_line.display_info ) {
+         printf("\npasos al goal: %4d    #acciones: %4d   coste actual: %7.2f    coste estimado: %7.2f    tiempo: %7.2f\n", first->h, first->g, min_gc, first->float_fn, gsearch_time);
+         fflush(stdout);
+       }
+       inicio = FALSE;
+     } else {
+       if ( gcmd_line.display_info ) {
+         printf("               %4d    #acciones: %4d   coste actual: %7.2f    coste estimado: %7.2f    tiempo: %7.2f\n", first->h, first->g, min_gc, first->float_fn, gsearch_time);
+         fflush(stdout);
+       }
+     }
+   }
+   else {
 
-    if ( first->h == 0 ) {
-      break;
-    }
+     printf("                ----------------------------------------------------------------------------------------------------- \n");
+     printf("               %4d    #acciones: %4d   coste actual: %7.2f    coste estimado: %7.2f    tiempo: %7.2f   #Explored: %6d\n", first->h, first->g, aux, first->float_fn, gsearch_time, gevaluated_states);
+     deleteLine();
+     deleteLine();       
+   }
 
-    for ( i = 0; i < first->num_H; i++ ) {
-      if ( result_to_dest( &S, &(first->S), first->H[i] ) ) {
-	/* we must include a check here whether the numerical part of the action
-	 * is entirely fulfilled; only those actions are applied.
-	 */
-	add_to_bfs_space( &S, first->H[i], first );
-      }
-    }
+   if ( first->h == 0 ) {
+     break;
+   }
 
-    first->next = lbfs_space_had;
-    lbfs_space_had = first;
-  }
+   for ( i = 0; i < first->num_H; i++ ) {
+     if ( result_to_dest( &S, &(first->S), first->H[i] ) ) {
+         /* we must include a check here whether the numerical part of the action
+         * is entirely fulfilled; only those actions are applied.
+         */
+         add_to_bfs_space( &S, first->H[i], first );
+       }
+     }
 
-  extract_plan( first );
-  return TRUE;
+     first->next = lbfs_space_had;
+     lbfs_space_had = first;
+     gsearch_time = 0;
+   }
 
-}
+   extract_plan( first );
+   return TRUE;
 
-
-
-void add_to_bfs_space( State *S, int op, BfsNode *father )
-
-{
-
-  BfsNode *new, *i;
-  int j, h, intg, int_fn = 0;
-  float cost = 0, floatg = 0, float_fn = 0;
+ }
 
 
-  if ( gcmd_line.optimize && goptimization_established ) {
-    if ( bfs_state_hashed( S ) ) {
-      return;
-    }
-  } else {
-    if ( superior_bfs_state_hashed( S ) ) {
-      return;
-    }
-  }
 
-  h = get_1P_and_A( S );
-  if ( gcmd_line.optimize && goptimization_established ) {
-    cost = gcost;
-    /* gtt is mulitplicator of TOTAL-TIME in final metric; if no
+ void add_to_bfs_space( State *S, int op, BfsNode *father )
+
+ {
+
+   BfsNode *new, *i;
+   int j, h, intg, int_fn = 0;
+   float cost = 0, floatg = 0, float_fn = 0;
+
+
+   if ( gcmd_line.optimize && goptimization_established ) {
+     if ( bfs_state_hashed( S ) ) {
+       return;
+     }
+   } else {
+     if ( superior_bfs_state_hashed( S ) ) {
+       return;
+     }
+   }
+
+   h = get_1P_and_A( S );
+   if ( gcmd_line.optimize && goptimization_established ) {
+     cost = gcost;
+     /* gtt is mulitplicator of TOTAL-TIME in final metric; if no
      * total-time part in metric, it is 0
      */
-    cost += h * gtt;
-  }
+     cost += h * gtt;
+   }
 
-  if ( h == INFINITY ) {
-    return;
-  }
+   if ( h == INFINITY ) {
+     return;
+   }
 
-  if ( father ) {
-    intg = father->g + 1;
-  } else {
-    intg = 0;
-  }
+   if ( father ) {
+     intg = father->g + 1;
+   } else {
+     intg = 0;
+   }
 
-  if ( gcmd_line.optimize && goptimization_established ) {
-    floatg = state_cost( S, father );
-    float_fn = (((float) gcmd_line.g_weight) * floatg) + (((float) gcmd_line.h_weight) * cost);
-    for ( i = lbfs_space_head; i->next; i = i->next ) {
-      if ( i->next->float_fn >= float_fn ) break;
-    }
-  } else {
-    int_fn = (gcmd_line.g_weight * intg) + (gcmd_line.h_weight * h);
-    for ( i = lbfs_space_head; i->next; i = i->next ) {
-      if ( i->next->int_fn >= int_fn ) break;
-    }
-  }
+   if ( gcmd_line.optimize && goptimization_established ) {
+     floatg = state_cost( S, father );
+     float_fn = (((float) gcmd_line.g_weight) * floatg) + (((float) gcmd_line.h_weight) * cost);
+     /*if (gcmd_line.h_weight<5){
+       printf("\tg=%4.2f h=%4.2f f=%4.2f\n", floatg, (((float) gcmd_line.h_weight) * cost), float_fn);
+     }*/
+     for ( i = lbfs_space_head; i->next; i = i->next ) {
+       if ( i->next->float_fn >= float_fn ) break;
+     }
+   } else {
+     int_fn = (gcmd_line.g_weight * intg) + (gcmd_line.h_weight * h);
+     for ( i = lbfs_space_head; i->next; i = i->next ) {
+       if ( i->next->int_fn >= int_fn ) break;
+     }
+   }
 
-  new = new_BfsNode();
-  copy_source_to_dest( &(new->S), S );
-  new->op = op;
-  new->h = h;
-  if ( gcmd_line.optimize && goptimization_established ) {
-    new->float_fn = float_fn;
-  } else {
-    new->int_fn = int_fn;
-  }
-  new->father = father;
-  new->g = intg;
+   new = new_BfsNode();
+   copy_source_to_dest( &(new->S), S );
+   new->op = op;
+   new->h = h;
+   if ( gcmd_line.optimize && goptimization_established ) {
+     new->float_fn = float_fn;
+   } else {
+     new->int_fn = int_fn;
+   }
+   new->father = father;
+   new->g = intg;
 
-  new->H = ( int * ) calloc( gnum_A, sizeof( int ) );
-  for ( j = 0; j < gnum_A; j++ ) {
-    new->H[j] = gA[j];
-  }
-  new->num_H = gnum_A;
+   new->H = ( int * ) calloc( gnum_A, sizeof( int ) );
+   for ( j = 0; j < gnum_A; j++ ) {
+     new->H[j] = gA[j];
+   }
+   new->num_H = gnum_A;
 
-  new->next = i->next;
-  new->prev = i;
-  i->next = new;
-  if ( new->next ) {
-    new->next->prev = new;
-  }
-  
-  hash_bfs_node( new );
+   new->next = i->next;
+   new->prev = i;
+   i->next = new;
+   if ( new->next ) {
+     new->next->prev = new;
+   }
 
-}
+   hash_bfs_node( new );
+
+ }
 
 
 
-float state_cost( State *S, BfsNode *father )
+ float state_cost( State *S, BfsNode *father )
 
-{
+ {
 
-  float cost = 0;
-  int i;
+   float cost = 0;
+   int i;
 
-  for ( i = 0; i < glnf_metric.num_pF; i++ ) {
-    if ( glnf_metric.pF[i] == -2 ) {
-      /* cost is number of steps from I to S 
-       */ 
-      if ( father ) {
-	cost += gtt * (father->g + 1);
-      }/* no father, no steps, no cost */
-    } else {
-      cost += (glnf_metric.pC[i] * 
-	       (S->f_V[glnf_metric.pF[i]] - ginitial_state.f_V[glnf_metric.pF[i]]));
-    }
-  }
+   for ( i = 0; i < glnf_metric.num_pF; i++ ) {
+     if ( glnf_metric.pF[i] == -2 ) {
+       /* cost is number of steps from I to S
+       */
+       if ( father ) {
+         cost += gtt * (father->g + 1);
+       }/* no father, no steps, no cost */
+     } else {
+       cost += (glnf_metric.pC[i] *
+         (S->f_V[glnf_metric.pF[i]] - ginitial_state.f_V[glnf_metric.pF[i]]));
+       }
+     }
 
-  return cost;
+     return cost;
 
-}
+   }
 
 
 
@@ -1138,7 +1170,7 @@ void hash_bfs_node( BfsNode *n )
   tmp->sum = sum;
   tmp->bfs_node = n;
   h->next = tmp;
-      
+
 }
 
 
@@ -1274,7 +1306,7 @@ Bool result_to_dest( State *dest, State *source, int op )
   Comparator comp;
 
   Bool one_appeared = FALSE;
-  
+
   if ( first_call ) {
     in_source = ( Bool * ) calloc( gnum_ft_conn, sizeof( Bool ) );
     in_dest = ( Bool * ) calloc( gnum_ft_conn, sizeof( Bool ) );
@@ -1353,7 +1385,7 @@ Bool result_to_dest( State *dest, State *source, int op )
       return FALSE;
     }
     true_ef[i] = TRUE;
-    one_appeared = TRUE; 
+    one_appeared = TRUE;
     for ( j = 0; j < gef_conn[ef].num_D; j++ ) {
       if ( in_del[gef_conn[ef].D[j]] ) continue;
       in_del[gef_conn[ef].D[j]] = TRUE;
@@ -1439,7 +1471,7 @@ Bool result_to_dest( State *dest, State *source, int op )
     }
     for ( j = 0; j < gef_conn[ef].num_IN; j++ ) {
       fl = gef_conn[ef].IN_fl[j];
-      if ( assigned[fl] || 
+      if ( assigned[fl] ||
 	   !source->f_D[fl]) {
 	/* assign and increase --> result not well-defined --> illegal!
 	 * affects an undefined fluent --> illegal!

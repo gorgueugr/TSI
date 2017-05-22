@@ -8,33 +8,33 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *********************************************************************/
 
 
 
 /*
- * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND, 
- * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH 
- * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL 
+ * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND,
+ * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH
+ * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL
  * WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
  * ANY WARRANTIES OR NON INFRINGEMENT.  THE USER ASSUMES ALL LIABILITY AND
  * RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR
- * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR 
- * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the 
+ * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR
+ * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the
  * generality of the foregoing, neither the author, nor JAIR, nor JAIR's
- * publishers and distributors, warrant that the Source Code will be 
- * error-free, will operate without interruption, or will meet the needs 
+ * publishers and distributors, warrant that the Source Code will be
+ * error-free, will operate without interruption, or will meet the needs
  * of the user.
  */
 
@@ -50,7 +50,7 @@
  *
  * Author: Joerg Hoffmann
  *
- *********************************************************************/ 
+ *********************************************************************/
 
 
 
@@ -81,7 +81,7 @@ void print_FactList( FactList *list, char *sepf, char *sept )
 
   FactList *i_list;
   TokenList *i_tl;
-    
+
   if ( list ) {
     i_tl = list->item;
     if (NULL == i_tl || NULL == i_tl->item) {
@@ -90,14 +90,14 @@ void print_FactList( FactList *list, char *sepf, char *sept )
       printf("%s", i_tl->item);
       i_tl = i_tl->next;
     }
-    
+
     while (NULL != i_tl) {
       if (NULL != i_tl->item) {
 	printf("%s%s", sept, i_tl->item);
       }
       i_tl = i_tl->next;
     }
-    
+
     for ( i_list = list->next; i_list; i_list = i_list->next ) {
       printf("%s", sepf);
       i_tl = i_list->item;
@@ -107,7 +107,7 @@ void print_FactList( FactList *list, char *sepf, char *sept )
 	printf("%s", i_tl->item);
 	i_tl = i_tl->next;
       }
-      
+
       while (NULL != i_tl) {
 	if (NULL != i_tl->item) {
 	  printf("%s%s", sept, i_tl->item);
@@ -134,12 +134,12 @@ void print_hidden_TokenList( TokenList *list, char *sep )
   } else {
     printf("empty");
   }
-  
+
   while (NULL != i_tl) {
     printf("%s%s", sep, i_tl->item);
     i_tl = i_tl->next;
   }
-  
+
 }
 
 
@@ -220,9 +220,9 @@ void print_PlNode( PlNode *plnode, int indent )
     printf("none\n");
     return;
   }
-  
+
   switch (plnode->connective) {
-  case ALL: 
+  case ALL:
     printf("ALL %s : %s\n", plnode->atom->item,
 	    plnode->atom->next->item);
     print_indent(indent);
@@ -240,7 +240,7 @@ void print_PlNode( PlNode *plnode, int indent )
     print_indent(indent);
     printf(")\n");
     break;
-  case AND: 
+  case AND:
     printf("A(  ");
     print_PlNode(plnode->sons, indent+4);
     if ( plnode->sons ) {
@@ -250,10 +250,10 @@ void print_PlNode( PlNode *plnode, int indent )
 	print_PlNode(i_son,indent+4);
       }
     }
-    print_indent(indent);      
+    print_indent(indent);
     printf(")\n");
     break;
-  case OR:  
+  case OR:
     printf("O(  ");
     print_PlNode(plnode->sons, indent+4);
     for ( i_son = plnode->sons->next; i_son!=NULL; i_son = i_son->next ) {
@@ -261,7 +261,7 @@ void print_PlNode( PlNode *plnode, int indent )
       printf("OR ");
       print_PlNode(i_son,indent+4);
     }
-    print_indent(indent);      
+    print_indent(indent);
     printf(")\n");
     break;
   case WHEN:
@@ -294,7 +294,7 @@ void print_PlNode( PlNode *plnode, int indent )
      break;
   case FAL:
      printf("(FALSE)\n");
-     break;   
+     break;
   case COMP:
     switch (plnode->comp) {
     case LE:
@@ -346,9 +346,9 @@ void print_PlNode( PlNode *plnode, int indent )
     printf("\n***** ERROR ****");
     printf("\nprint_plnode: %d > Wrong Node specifier\n", plnode->connective);
     exit(1);
-  }     
+  }
 
-} 
+}
 
 
 
@@ -451,9 +451,9 @@ void print_Wff( WffNode *n, int indent )
     printf("none\n");
     return;
   }
-  
+
   switch (n->connective) {
-  case ALL: 
+  case ALL:
     printf("ALL x%d (%s): %s\n", n->var, n->var_name,
 	    gtype_names[n->var_type]);
     print_indent(indent);
@@ -471,7 +471,7 @@ void print_Wff( WffNode *n, int indent )
     print_indent(indent);
     printf(")\n");
     break;
-  case AND: 
+  case AND:
     printf("A(  ");
     print_Wff(n->sons, indent+4);
     if ( n->sons ) {
@@ -485,10 +485,10 @@ void print_Wff( WffNode *n, int indent )
 	print_Wff(i,indent+4);
       }
     }
-    print_indent(indent);      
+    print_indent(indent);
     printf(")\n");
     break;
-  case OR:  
+  case OR:
     printf("O(  ");
     print_Wff(n->sons, indent+4);
     for ( i = n->sons->next; i!=NULL; i = i->next ) {
@@ -496,7 +496,7 @@ void print_Wff( WffNode *n, int indent )
       printf("OR ");
       print_Wff(i,indent+4);
     }
-    print_indent(indent);      
+    print_indent(indent);
     printf(")\n");
     break;
   case NOT:
@@ -520,7 +520,7 @@ void print_Wff( WffNode *n, int indent )
      break;
   case FAL:
      printf("(FALSE)\n");
-     break;   
+     break;
   case COMP:
     switch (n->comp) {
     case LE:
@@ -550,9 +550,9 @@ void print_Wff( WffNode *n, int indent )
     printf("\n***** ERROR ****");
     printf("\nprint_Wff: %d > Wrong Node specifier\n", n->connective);
     exit(1);
-  }     
+  }
 
-} 
+}
 
 
 
@@ -572,7 +572,7 @@ void print_Operator( Operator *o )
 	   i, o->var_names[i], gtype_names[o->var_types[i]],
 	   o->removed[i] ? "YES" : "NO");
   }
-  printf("\ntotal params %d, real params %d\n", 
+  printf("\ntotal params %d, real params %d\n",
 	 o->num_vars, o->number_of_real_params);
 
   printf("\nPreconds:\n");
@@ -635,7 +635,7 @@ void print_NormOperator( NormOperator *o )
   NormEffect *e;
   int i, m;
 
-  printf("\n\n----------------Operator %s, normalized form--------------\n", 
+  printf("\n\n----------------Operator %s, normalized form--------------\n",
 	 o->operator->name);
 
   for ( i = 0; i < o->num_vars; i++ ) {
@@ -646,7 +646,7 @@ void print_NormOperator( NormOperator *o )
 	 o->num_removed_vars);
   for ( i = 0; i < o->num_removed_vars; i++ ) {
     m = o->removed_vars[i];
-    printf("\nx%d (%s) of type %s, type constraint ", m, o->operator->var_names[m], 
+    printf("\nx%d (%s) of type %s, type constraint ", m, o->operator->var_names[m],
 	   gtype_names[o->operator->var_types[m]]);
     print_type( o->type_removed_vars[i] );
   }
@@ -674,7 +674,7 @@ void print_NormOperator( NormOperator *o )
       printf("(> ");
       break;
     default:
-      printf("\nwrong comparator of Expnodes in normpre %d\n\n", 
+      printf("\nwrong comparator of Expnodes in normpre %d\n\n",
 	     o->numeric_preconds_comp[i]);
       exit( 1 );
     }
@@ -715,7 +715,7 @@ void print_NormOperator( NormOperator *o )
 	printf("(> ");
 	break;
       default:
-	printf("\nwrong comparator of Expnodes in normeff %d\n\n", 
+	printf("\nwrong comparator of Expnodes in normeff %d\n\n",
 	       e->numeric_conditions_comp[i]);
 	exit( 1 );
       }
@@ -752,7 +752,7 @@ void print_NormOperator( NormOperator *o )
 	printf("\ndecrease ");
 	break;
       default:
-	printf("\n\nprint normop: illegal neft %d\n\n", 
+	printf("\n\nprint normop: illegal neft %d\n\n",
 	       e->numeric_effects_neft[i]);
 	exit( 1 );
       }
@@ -774,9 +774,9 @@ void print_MixedOperator( MixedOperator *o )
   NumericEffect *ne;
   Literal *l;
 
-  printf("\n\n----------------Operator %s, mixed form--------------\n", 
+  printf("\n\n----------------Operator %s, mixed form--------------\n",
 	 o->operator->name);
- 
+
   for ( i = 0; i < o->operator->num_vars; i++ ) {
     printf("\nx%d = %s of type ", i, gconstants[o->inst_table[i]]);
     print_type( o->operator->var_types[i] );
@@ -805,7 +805,7 @@ void print_MixedOperator( MixedOperator *o )
       printf("(> ");
       break;
     default:
-      printf("\nwrong comparator of Expnodes in mixedpre %d\n\n", 
+      printf("\nwrong comparator of Expnodes in mixedpre %d\n\n",
 	     o->numeric_preconds_comp[i]);
       exit( 1 );
     }
@@ -872,7 +872,7 @@ void print_PseudoAction( PseudoAction *o )
   PseudoActionEffect *e;
   int i, m;
 
-  printf("\n\n----------------Pseudo Action %s--------------\n", 
+  printf("\n\n----------------Pseudo Action %s--------------\n",
 	 o->operator->name);
 
   for ( i = 0; i < o->operator->num_vars; i++ ) {
@@ -903,7 +903,7 @@ void print_PseudoAction( PseudoAction *o )
       printf("(> ");
       break;
     default:
-      printf("\nwrong comparator of Expnodes in mixedpre %d\n\n", 
+      printf("\nwrong comparator of Expnodes in mixedpre %d\n\n",
 	     o->numeric_preconds_comp[i]);
       exit( 1 );
     }
@@ -939,7 +939,7 @@ void print_PseudoAction( PseudoAction *o )
 	printf("(> ");
 	break;
       default:
-	printf("\nwrong comparator of Expnodes in normeff %d\n\n", 
+	printf("\nwrong comparator of Expnodes in normeff %d\n\n",
 	       e->numeric_conditions_comp[i]);
 	exit( 1 );
       }
@@ -976,7 +976,7 @@ void print_PseudoAction( PseudoAction *o )
 	printf("\ndecrease ");
 	break;
       default:
-	printf("\n\nprint normop: illegal neft %d\n\n", 
+	printf("\n\nprint normop: illegal neft %d\n\n",
 	       e->numeric_effects_neft[i]);
 	exit( 1 );
       }
@@ -1000,7 +1000,7 @@ void print_Action( Action *a )
        !a->pseudo_action ) {
     printf("\n\nAction REACH-GOAL");
   } else {
-    printf("\n\nAction %s", a->name ); 
+    printf("\n\nAction %s", a->name );
     for ( i = 0; i < a->num_name_vars; i++ ) {
       printf(" %s", gconstants[a->name_inst_table[i]]);
     }
@@ -1029,7 +1029,7 @@ void print_Action( Action *a )
       printf("(> ");
       break;
     default:
-      printf("\nwrong comparator of Expnodes in actionpre %d\n\n", 
+      printf("\nwrong comparator of Expnodes in actionpre %d\n\n",
 	     a->numeric_preconds_comp[i]);
       exit( 1 );
     }
@@ -1066,7 +1066,7 @@ void print_Action( Action *a )
 	printf("(> ");
 	break;
       default:
-	printf("\nwrong comparator of Expnodes in normeff %d\n\n", 
+	printf("\nwrong comparator of Expnodes in normeff %d\n\n",
 	       e->numeric_conditions_comp[i]);
 	exit( 1 );
       }
@@ -1102,7 +1102,7 @@ void print_Action( Action *a )
 	printf("\ndecrease ");
 	break;
       default:
-	printf("\n\nprint normop: illegal neft %d\n\n", 
+	printf("\n\nprint normop: illegal neft %d\n\n",
 	       e->numeric_effects_neft[i]);
 	exit( 1 );
       }
@@ -1129,7 +1129,7 @@ void print_Action_name( Action *a )
        !a->pseudo_action ) {
     printf("REACH-GOAL");
   } else {
-    printf("%s", a->name ); 
+    printf("%s", a->name );
     for ( i = 0; i < a->num_name_vars; i++ ) {
       printf(" %s", gconstants[a->name_inst_table[i]]);
     }
@@ -1150,7 +1150,7 @@ void print_lnf_Action( Action *a )
        !a->pseudo_action ) {
     printf("\n\nAction REACH-GOAL");
   } else {
-    printf("\n\nAction %s", a->name ); 
+    printf("\n\nAction %s", a->name );
     for ( i = 0; i < a->num_name_vars; i++ ) {
       printf(" %s", gconstants[a->name_inst_table[i]]);
     }
@@ -1170,7 +1170,7 @@ void print_lnf_Action( Action *a )
       printf("(> ");
       break;
     default:
-      printf("\nwrong comparator of Expnodes in lnf actionpre %d\n\n", 
+      printf("\nwrong comparator of Expnodes in lnf actionpre %d\n\n",
 	     a->lnf_preconds_comp[i]);
       exit( 1 );
     }
@@ -1198,7 +1198,7 @@ void print_lnf_Action( Action *a )
 	printf("(> ");
 	break;
       default:
-	printf("\nwrong comparator of Expnodes in lnf normeff %d\n\n", 
+	printf("\nwrong comparator of Expnodes in lnf normeff %d\n\n",
 	       e->lnf_conditions_comp[i]);
 	exit( 1 );
       }
@@ -1224,7 +1224,7 @@ void print_lnf_Action( Action *a )
 	printf("\nincrease ");
 	break;
       default:
-	printf("\n\nprint lnf normop: illegal neft %d\n\n", 
+	printf("\n\nprint lnf normop: illegal neft %d\n\n",
 	       e->lnf_effects_neft[i]);
 	exit( 1 );
       }
@@ -1256,7 +1256,7 @@ void print_type( int t )
 	if ( gpredicate_to_type[gintersected_types[t][j]] == -1 ) {
 	  printf("%s", gtype_names[gintersected_types[t][j]]);
 	} else {
-	  printf("UNARY INERTIA TYPE (%s)", 
+	  printf("UNARY INERTIA TYPE (%s)",
 		 gpredicates[gpredicate_to_type[gintersected_types[t][j]]]);
 	}
 	if ( j < gnum_intersected_types[t] - 1 ) {
@@ -1311,7 +1311,7 @@ void print_Fact( Fact *f )
     printf(")");
     return;
   }
-    
+
   printf("(%s", gpredicates[f->predicate]);
   for ( j=0; j<garity[f->predicate]; j++ ) {
     printf(" ");
@@ -1428,7 +1428,7 @@ void print_op_name( int index )
        !a->pseudo_action ) {
     printf("REACH-GOAL");
   } else {
-    printf("%s", a->name ); 
+    printf("%s", a->name );
     for ( i = 0; i < a->num_name_vars; i++ ) {
       printf(" %s", gconstants[a->name_inst_table[i]]);
     }
@@ -1443,7 +1443,7 @@ void print_State( State S )
 {
 
   int i;
-  
+
   for ( i = 0; i < S.num_F; i++ ) {
     printf("\n");
     print_ft_name( S.F[i] );
@@ -1482,9 +1482,10 @@ void print_State( State S )
 
 void print_plan( void )
 
-{  
+{
 
   int i;
+  float costeTotal = 0;
 
   printf("\n\nff: found legal plan as follows");
   printf("\n\nstep ");
@@ -1492,6 +1493,7 @@ void print_plan( void )
     printf("%4d: ", i);
     print_op_name( gplan_ops[i] );
     printf("\n     ");
+    costeTotal += gop_conn[gplan_ops[i]].action->effects->cost;
   }
-
+  printf("\t\tCoste Total: %2.2f\n", costeTotal);
 }
