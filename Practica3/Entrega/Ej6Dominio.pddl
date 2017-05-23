@@ -1,7 +1,7 @@
-﻿(define (domain BELKAN3)
+﻿(define (domain BELKAN5)
 	 (:requirements :strips :typing :adl :fluents)
-	 (:types robot zona objeto personaje orientacion
-		 entregable zapatillas bikini - objeto tipoterreno)
+	 (:types entregable zapatillas bikini - objeto robot zona  personaje orientacion
+		  tipoterreno)
 	 (:predicates
 	 		(atR ?x - robot ?y - zona)
 			(atO ?x - objeto ?y - zona)
@@ -18,10 +18,16 @@
 			(habilita ?o - objeto ?t - tipoterreno)
 	 )
 	 (:functions
+		 (objetosEntregables)
+		 (puntosRobot)
+		 (puntos ?p - personaje ?o - entregable)
+
 		 (tamanioMochila)
 		 (cosasMochila)
+
 		 (coste-total)
 		 (coste ?z1 ?z2 - zona)
+
 		 )
 	(:action girar-izq
 	:parameters (?r - robot ?o ?o1 - orientacion)
@@ -50,34 +56,36 @@
 						)
 	)
 	(:action coger-objeto
-		:parameters (?r - robot ?obj - objeto ?z - zona ?t)
+		:parameters (?r - robot ?obj - objeto ?z - zona)
 		:precondition (and (atR ?r ?z) (atO ?obj ?z)(manoVacia))
 		:effect (and
 							(not (atO ?obj ?z))
 							(not (manoVacia))
 							(cogido ?obj)
-							(forall ( ?t - tipoterreno )
-								(when (habilita ?obj ?t) 	(caminable ?t))
-							)
+							(forall (?t - tipoterreno) (when (habilita ?obj ?t) (caminable ?t)))
 						)
 	)
 	(:action dejar-objeto
-		:parameters (?r - robot ?obj - objeto ?z - zona ?t)
+		:parameters (?r - robot ?obj - objeto ?z - zona)
 		:precondition (and (atR ?r ?z)(cogido ?obj))
 		:effect (and
 							(atO ?obj ?z)
 							(not (cogido ?obj))
-							(atO ?obj ?z)
-							(manovacia)
-							(forall ( ?t - tipoterreno )
-								(when (habilita ?obj ?t) 	(not (caminable ?t)))
+							(manoVacia)
+							(forall (?t - tipoterreno)
+								(when (habilita ?obj ?t) (not (caminable ?t))))
 							)
-						)
 	)
 	(:action entregar-objeto
-		:parameters(?r - robot ?obj - objeto ?z - zona ?p - personaje)
+		:parameters(?r - robot ?obj - entregable ?z - zona ?p - personaje)
 		:precondition (and (not (tiene ?obj ?p))(atR ?r ?z)(atP ?p ?z)(cogido ?obj))
-		:effect (and (not (cogido ?obj))(tiene ?obj ?p)(manovacia))
+		:effect (and
+							(not (cogido ?obj))
+							(tiene ?obj ?p)
+							(manoVacia)
+							(increase (puntosRobot)(puntos ?p ?obj))
+							(decrease (objetosEntregables) 1)
+						)
 	)
 	(:action guardar-en-mochila
 	  :parameters (?x - objeto)

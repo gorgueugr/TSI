@@ -1,6 +1,6 @@
-﻿(define (problem Problema3)
+﻿(define (problem Problema4)
 
-(:domain BELKAN3)
+(:domain BELKAN4)
 
 (:OBJECTS
 zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 zona3_1 zona3_2 zona3_3 zona3_4 zona3_5 zona4_1 zona4_2 zona4_3 zona4_4 zona4_5 zona5_1 zona5_2 zona5_3 zona5_4 zona5_5
@@ -17,6 +17,38 @@ zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 
 (:INIT
   (= (tamanioMochila) 1)
   (= (cosasMochila) 0)
+  (= (puntosRobot) 0)
+
+  (= (puntos LEONARDO OSCAR)  10)
+  (= (puntos LEONARDO ROSA)  1)
+  (= (puntos LEONARDO MANZANA) 3)
+  (= (puntos LEONARDO ALGORITMO) 4)
+  (= (puntos LEONARDO ORO)  5)
+
+  (= (puntos PRINCESA OSCAR)  5)
+  (= (puntos PRINCESA ROSA)  10)
+  (= (puntos PRINCESA MANZANA)  1)
+  (= (puntos PRINCESA ALGORITMO)  3)
+  (= (puntos PRINCESA ORO)  4)
+
+  (= (puntos BRUJA OSCAR)  4)
+  (= (puntos BRUJA ROSA)  5)
+  (= (puntos BRUJA MANZANA)  10)
+  (= (puntos BRUJA ALGORITMO)  1)
+  (= (puntos BRUJA ORO)  3)
+
+  (= (puntos PROFESOR OSCAR)  3)
+  (= (puntos PROFESOR ROSA)  4)
+  (= (puntos PROFESOR MANZANA)  5)
+  (= (puntos PROFESOR ALGORITMO)  10)
+  (= (puntos PROFESOR ORO)  1)
+
+  (= (puntos PRINCIPE OSCAR)  1)
+  (= (puntos PRINCIPE ROSA)  3)
+  (= (puntos PRINCIPE MANZANA) 4)
+  (= (puntos PRINCIPE ALGORITMO)  5)
+  (= (puntos PRINCIPE ORO)  10)
+
 
 (habilita zapas BOSQUE)
 (habilita baniador AGUA)
@@ -238,6 +270,8 @@ zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 
     (atO zapas zona2_5)
     (atO baniador zona2_1)
 
+    (= (objetosEntregables) 5)
+
 
 		(atR ROBOT zona2_1)
 		(orientado ROBOT este)
@@ -254,10 +288,8 @@ zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 
       ;    (tiene ROSA PRINCESA)
       ;)
       (and
-      (cogido baniador)
-      (enMochila zapas)
-      (atR ROBOT zona4_2)
+        (<= (objetosEntregables) 1)
       )
 )
-(:metric minimize (coste-total))
+
 )
