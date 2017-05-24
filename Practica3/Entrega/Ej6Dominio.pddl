@@ -1,7 +1,8 @@
-﻿(define (domain BELKAN5)
-	 (:requirements :strips :typing :adl :fluents)
-	 (:types entregable zapatillas bikini - objeto robot zona  personaje orientacion
-		  tipoterreno)
+﻿(define (domain BELKAN6)
+	 (:requirements :strips :typing :adl :fluents :equality)
+	 (:types entregable zapatillas bikini - objeto
+		 			robot zona  personaje orientacion
+		  		tipoterreno)
 	 (:predicates
 	 		(atR ?x - robot ?y - zona)
 			(atO ?x - objeto ?y - zona)

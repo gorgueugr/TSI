@@ -20,6 +20,10 @@
 	 (:functions
 		 (tamanioMochila)
 		 (cosasMochila)
+
+		 (puntosRobot)
+		 (puntos ?p - personaje ?o - entregable)
+
 		 (coste-total)
 		 (coste ?z1 ?z2 - zona)
 		 )
@@ -75,9 +79,14 @@
 						)
 	)
 	(:action entregar-objeto
-		:parameters(?r - robot ?obj - objeto ?z - zona ?p - personaje)
+		:parameters(?r - robot ?obj - entregable ?z - zona ?p - personaje)
 		:precondition (and (not (tiene ?obj ?p))(atR ?r ?z)(atP ?p ?z)(cogido ?obj))
-		:effect (and (not (cogido ?obj))(tiene ?obj ?p)(manovacia))
+		:effect (and
+							(not (cogido ?obj))
+							(tiene ?obj ?p)
+							(manovacia)
+							(increase (puntosRobot) (puntos ?p ?obj))
+						)
 	)
 	(:action guardar-en-mochila
 	  :parameters (?x - objeto)
