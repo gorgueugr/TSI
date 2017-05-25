@@ -9,32 +9,32 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *********************************************************************/
 
 
 /*
- * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND, 
- * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH 
- * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL 
+ * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND,
+ * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH
+ * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL
  * WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
  * ANY WARRANTIES OR NON INFRINGEMENT.  THE USER ASSUMES ALL LIABILITY AND
  * RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR
- * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR 
- * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the 
+ * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR
+ * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the
  * generality of the foregoing, neither the author, nor JAIR, nor JAIR's
- * publishers and distributors, warrant that the Source Code will be 
- * error-free, will operate without interruption, or will meet the needs 
+ * publishers and distributors, warrant that the Source Code will be
+ * error-free, will operate without interruption, or will meet the needs
  * of the user.
  */
 
@@ -48,8 +48,8 @@
  * Description: The main routine for the Metric-FastForward Planner.
  *
  * Author: Joerg Hoffmann 2001 / 2002
- * 
- *********************************************************************/ 
+ *
+ *********************************************************************/
 
 
 
@@ -164,7 +164,7 @@ char *gdomain_name = NULL;
  */
 PlOperator *gloaded_ops = NULL;
 
-/* stores initials as fact_list 
+/* stores initials as fact_list
  */
 PlNode *gorig_initial_facts = NULL;
 
@@ -205,7 +205,7 @@ ParseExpNode *gparse_metric = NULL;
 /* connection to instantiation ( except ops, goal, initial )
  */
 
-/* all typed objects 
+/* all typed objects
  */
 FactList *gorig_constant_list = NULL;
 
@@ -623,10 +623,10 @@ int main( int argc, char *argv[] )
   /* resulting name for ops file
    */
   char ops_file[MAX_LENGTH] = "";
-  /* same for fct file 
+  /* same for fct file
    */
   char fct_file[MAX_LENGTH] = "";
-  
+
   struct tms start, end;
 
   Bool found_plan;
@@ -650,14 +650,14 @@ int main( int argc, char *argv[] )
 
   /* one input name missing
    */
-  if ( !gcmd_line.ops_file_name || 
+  if ( !gcmd_line.ops_file_name ||
        !gcmd_line.fct_file_name ) {
     fprintf(stdout, "\nff: two input files needed\n\n");
-    ff_usage();      
+    ff_usage();
     exit( 1 );
   }
   /* add path info, complete file names will be stored in
-   * ops_file and fct_file 
+   * ops_file and fct_file
    */
   sprintf(ops_file, "%s%s", gcmd_line.path, gcmd_line.ops_file_name);
   sprintf(fct_file, "%s%s", gcmd_line.path, gcmd_line.fct_file_name);
@@ -673,15 +673,15 @@ int main( int argc, char *argv[] )
    */
   if ( gcmd_line.display_info >= 1 ) {
     printf("\nff: parsing domain file");
-  } 
-  /* it is important for the pddl language to define the domain before 
-   * reading the problem 
+  }
+  /* it is important for the pddl language to define the domain before
+   * reading the problem
    */
   load_ops_file( ops_file );
   /* problem file (facts)
-   */  
+   */
   if ( gcmd_line.display_info >= 1 ) {
-    printf(" ... done.\nff: parsing problem file"); 
+    printf(" ... done.\nff: parsing problem file");
   }
   load_fct_file( fct_file );
   if ( gcmd_line.display_info >= 1 ) {
@@ -690,7 +690,9 @@ int main( int argc, char *argv[] )
 
   /* This is needed to get all types.
    */
+
   build_orig_constant_list();
+
 
   /* last step of parsing: see if it's an ADL domain!
    */
@@ -706,13 +708,14 @@ int main( int argc, char *argv[] )
 
 
   /**************************
-   * first do PREPROCESSING * 
+   * first do PREPROCESSING *
    **************************/
 
-  /* start by collecting all strings and thereby encoding 
+  /* start by collecting all strings and thereby encoding
    * the domain in integers.
    */
   encode_domain_in_integers();
+
 
   /* inertia preprocessing, first step:
    *   - collect inertia information
@@ -737,10 +740,11 @@ int main( int argc, char *argv[] )
   translate_negative_preconds();
 
   /* split domain in easy (disjunction of conjunctive preconds)
-   * and hard (non DNF preconds) part, to apply 
+   * and hard (non DNF preconds) part, to apply
    * different instantiation algorithms
    */
   split_domain();
+
 
   /***********************************************
    * PREPROCESSING FINISHED                      *
@@ -756,7 +760,7 @@ int main( int argc, char *argv[] )
 
   times( &start );
 
-  /* perform reachability analysis in terms of relaxed 
+  /* perform reachability analysis in terms of relaxed
    * fixpoint
    */
   perform_reachability_analysis();
@@ -785,7 +789,7 @@ int main( int argc, char *argv[] )
   }
   times( &end );
   TIME( gLNF_time );
-  
+
   times( &start );
 
   /* now build globally accessable connectivity graph
@@ -825,7 +829,7 @@ int main( int argc, char *argv[] )
 
   if ( gcmd_line.ehc ) {
     found_plan = do_enforced_hill_climbing();
-    
+
     if ( !found_plan ) {
       printf("\n\nEnforced Hill-climbing failed !");
       printf("\nswitching to Best-first Search now.\n");
@@ -879,19 +883,19 @@ void output_planner_info( void )
 
 {
 
-  printf( "\n\ntime spent: %7.2f seconds instantiating %d easy, %d hard action templates", 
+  printf( "\n\ntime spent: %7.2f seconds instantiating %d easy, %d hard action templates",
 	  gtempl_time, gnum_easy_templates, gnum_hard_mixed_operators );
-  printf( "\n            %7.2f seconds reachability analysis, yielding %d facts and %d actions", 
+  printf( "\n            %7.2f seconds reachability analysis, yielding %d facts and %d actions",
 	  greach_time, gnum_pp_facts, gnum_actions );
-  printf( "\n            %7.2f seconds creating final representation with %d relevant facts, %d relevant fluents", 
+  printf( "\n            %7.2f seconds creating final representation with %d relevant facts, %d relevant fluents",
 	  grelev_time, gnum_relevant_facts, gnum_relevant_fluents );
   printf( "\n            %7.2f seconds computing LNF",
 	  gLNF_time );
   printf( "\n            %7.2f seconds building connectivity graph",
 	  gconn_time );
-  printf( "\n            %7.2f seconds searching, evaluating %d states, to a max depth of %d", 
+  printf( "\n            %7.2f seconds searching, evaluating %d states, to a max depth of %d",
 	  gsearch_time, gevaluated_states, gmax_search_depth );
-  printf( "\n            %7.2f seconds total time", 
+  printf( "\n            %7.2f seconds total time",
 	  gtempl_time + greach_time + grelev_time + gLNF_time + gconn_time + gsearch_time );
 
   printf("\n\n");
@@ -954,14 +958,14 @@ void ff_usage( void )
     printf("    126     fixpoint result on each evaluated state\n");
     printf("    127     1P extracted on each evaluated state\n");
     printf("    128     H set collected for each evaluated state\n");
-    
-    
+
+
     /*    printf("    125     False sets of goals <GAM>\n"); */
     /*    printf("    126     detected ordering constraints leq_h <GAM>\n"); */
     /*    printf("    127     the Goal Agenda <GAM>\n"); */
-    
-    
-    
+
+
+
     /*   printf("    109     reachability analysis results\n"); */
     /*   printf("    110     final domain representation\n"); */
     /*   printf("    111     connectivity graph\n"); */
@@ -971,7 +975,7 @@ void ff_usage( void )
     /*   printf("    115     fixpoint result on each evaluated state <1Ph>\n"); */
     /*   printf("    116     1P extracted on each evaluated state <1Ph>\n"); */
     /*   printf("    117     H set collected for each evaluated state <1Ph>\n"); */
-    
+
     printf("\n-d <num>    switch on debugging\n\n");
   }
 
@@ -995,7 +999,7 @@ Bool process_command_line( int argc, char *argv[] )
    */
   gcmd_line.g_weight = 1;
   gcmd_line.h_weight = 5;
-  
+
   memset(gcmd_line.ops_file_name, 0, MAX_LENGTH);
   memset(gcmd_line.fct_file_name, 0, MAX_LENGTH);
   memset(gcmd_line.path, 0, MAX_LENGTH);
@@ -1012,7 +1016,7 @@ Bool process_command_line( int argc, char *argv[] )
     case 'O':
       gcmd_line.optimize = TRUE;
       gcmd_line.ehc = FALSE;
-      break;      
+      break;
     default:
       if ( --argc && ++argv ) {
 	switch ( option ) {
@@ -1056,4 +1060,3 @@ Bool process_command_line( int argc, char *argv[] )
   return TRUE;
 
 }
-

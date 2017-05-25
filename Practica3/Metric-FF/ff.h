@@ -8,32 +8,32 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  *********************************************************************/
 
 
 /*
- * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND, 
- * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH 
- * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL 
+ * THIS SOURCE CODE IS SUPPLIED  ``AS IS'' WITHOUT WARRANTY OF ANY KIND,
+ * AND ITS AUTHOR AND THE JOURNAL OF ARTIFICIAL INTELLIGENCE RESEARCH
+ * (JAIR) AND JAIR'S PUBLISHERS AND DISTRIBUTORS, DISCLAIM ANY AND ALL
  * WARRANTIES, INCLUDING BUT NOT LIMITED TO ANY IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND
  * ANY WARRANTIES OR NON INFRINGEMENT.  THE USER ASSUMES ALL LIABILITY AND
  * RESPONSIBILITY FOR USE OF THIS SOURCE CODE, AND NEITHER THE AUTHOR NOR
- * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR 
- * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the 
+ * JAIR, NOR JAIR'S PUBLISHERS AND DISTRIBUTORS, WILL BE LIABLE FOR
+ * DAMAGES OF ANY KIND RESULTING FROM ITS USE.  Without limiting the
  * generality of the foregoing, neither the author, nor JAIR, nor JAIR's
- * publishers and distributors, warrant that the Source Code will be 
- * error-free, will operate without interruption, or will meet the needs 
+ * publishers and distributors, warrant that the Source Code will be
+ * error-free, will operate without interruption, or will meet the needs
  * of the user.
  */
 
@@ -48,7 +48,7 @@
  * Author: Joerg Hoffmann 2001
  * Contact: hoffmann@informatik.uni-freiburg.de
  *
- *********************************************************************/ 
+ *********************************************************************/
 
 
 
@@ -154,10 +154,10 @@
 
 /* maximal string length
  */
-#define MAX_LENGTH 256 
+#define MAX_LENGTH 256
 
 
-/* marks border between connected items 
+/* marks border between connected items
  */
 #define CONNECTOR "~"
 
@@ -196,17 +196,17 @@
 
 /* max number of different fluents in one list of LNF
  */
-#define MAX_LNF_F 25
+#define MAX_LNF_F 500
 
 
 /* max number of comps in one cond / precond / goal
  */
-#define MAX_LNF_COMPS 100
+#define MAX_LNF_COMPS 1000
 
 
 /* max number of lnf effects in one action effect
  */
-#define MAX_LNF_EFFS 50
+#define MAX_LNF_EFFS 500
 
 
 
@@ -225,22 +225,22 @@
 
 
 
-#define MAX_CONSTANTS 2000
-#define MAX_PREDICATES 50
-#define MAX_FUNCTIONS 50
-#define MAX_TYPES 50
-#define MAX_ARITY 5
-#define MAX_VARS 15
+#define MAX_CONSTANTS 3000
+#define MAX_PREDICATES 1000
+#define MAX_FUNCTIONS 1000
+#define MAX_TYPES 500
+#define MAX_ARITY 50
+#define MAX_VARS 150
 
 
 #define MAX_TYPE 2000
 
 
-#define MAX_OPERATORS 50
+#define MAX_OPERATORS 100
 
 
 /* in DNF: AND with OR - sons - collect 'hitting set':
- * one son of each OR node. 
+ * one son of each OR node.
  *
  * this here is initial max number of such son s that can be collected
  * (grows dynamically, if required)
@@ -268,7 +268,7 @@
 
 
 
-#define MAX_STATE 800
+#define MAX_STATE 1000
 
 
 #define MAX_PLAN_LENGTH 5000
@@ -480,8 +480,8 @@ typedef enum _ExpConnective{FHEAD = 1000,
 			    NUMBER,
 			    MINUS,
 			    AD,
-                            SU, 
-			    MU, 
+                            SU,
+			    MU,
 			    DI} ExpConnective;
 
 
@@ -506,18 +506,18 @@ typedef struct _ParseExpNode {
 
 
 /* This type indicates whether a node in the pddl tree stands for
- * an atomic expression, a junctor or a quantor. 
+ * an atomic expression, a junctor or a quantor.
  */
 typedef enum _Connective{TRU = 2000,
 			 FAL,
 			 ATOM,
 			 COMP,
 			 NEF,
-			 NOT, 
-			 AND, 
-			 OR, 
-			 ALL, 
-			 EX, 
+			 NOT,
+			 AND,
+			 OR,
+			 ALL,
+			 EX,
 			 WHEN} Connective;
 
 
@@ -591,7 +591,7 @@ typedef struct _PlOperator {
   /* only important for PDDL where :VARS may be added to the param list
    * which must be hidden when writing the plan to an output file
    */
-  int number_of_real_params; 
+  int number_of_real_params;
 
   /* the params, as they are declared in domain file
    */
@@ -622,7 +622,7 @@ typedef struct _PlOperator {
 
 
 
-/***************** 
+/*****************
  * INSTANTIATION *
  *****************/
 
@@ -817,11 +817,11 @@ typedef struct _Effect {
 typedef struct _Operator {
 
   char *name, *var_names[MAX_VARS];
-  int number_of_real_params; 
+  int number_of_real_params;
 
   int num_vars, var_types[MAX_VARS];
   Bool removed[MAX_VARS];
- 
+
   WffNode *preconds;
 
   Effect *effects;
@@ -857,7 +857,7 @@ typedef struct _NormEffect {
 
   /* numerical parts: not yet normalized any further; seems that
    * normalizing requires certain additional structures +
-   * transformation, and that these will better be done when 
+   * transformation, and that these will better be done when
    * the representation is fully instantiated already.
    */
   Comparator *numeric_conditions_comp;
@@ -877,7 +877,7 @@ typedef struct _NormEffect {
 
 
 typedef struct _NormOperator {
-  
+
   Operator *operator;
 
   int num_vars, var_types[MAX_VARS];
@@ -897,7 +897,7 @@ typedef struct _NormOperator {
   Bool out;
 
 } NormOperator, *NormOperator_pointer;
-  
+
 
 
 /* minimal info for a fully instantiated easy operator;
@@ -930,7 +930,7 @@ typedef struct _EasyTemplate {
  * effect conditions
  */
 typedef struct _MixedOperator {
-  
+
   Operator *operator;
 
   int inst_table[MAX_VARS];
@@ -953,7 +953,7 @@ typedef struct _MixedOperator {
 
 /* last hard step: everything is action - like, except that
  * facts are not yet integer coded
- */  
+ */
 
 
 
@@ -1058,7 +1058,7 @@ typedef struct _ActionEffect {
   Comparator *lnf_conditions_comp;
   LnfExpNode_pointer *lnf_conditions_lh;
   float *lnf_conditions_rh;
-  int num_lnf_conditions;  
+  int num_lnf_conditions;
 
   NumericEffectType *lnf_effects_neft;
   int *lnf_effects_fl;
@@ -1066,7 +1066,7 @@ typedef struct _ActionEffect {
   int num_lnf_effects;
 
   /* this is true iff the numerical part of the effects affects or accesses
-   * an undefined fluent (i.e. in numeric_effects_fl or numeric_effects_rh ) 
+   * an undefined fluent (i.e. in numeric_effects_fl or numeric_effects_rh )
    * --- then, if the effect appears, the action is
    * illegal.
    */
@@ -1098,7 +1098,7 @@ typedef struct _Action {
   /* numeric part, in general format, with fluents encoded as fl ints
    *
    * also, will (?) be transformed to lh fl, rh float; then, expnodes as
-   * fast accessible as specialised structures. 
+   * fast accessible as specialised structures.
    */
   Comparator *numeric_preconds_comp;
   ExpNode_pointer *numeric_preconds_lh, *numeric_preconds_rh;
@@ -1333,7 +1333,7 @@ typedef struct _FlConn {
   /* the following are members handled within heuristic algorithms.
    */
 
-  /* this are arrays saying what the max value at 
+  /* this are arrays saying what the max value at
    * the levels in the RPG is, resp. whether the value
    * can be defined there at all, resp. what the increasers
    * at that level have added.
@@ -1375,7 +1375,7 @@ typedef struct _FlConn {
 
 
 typedef struct _State {
-  
+
   int *F;
   int num_F;
 
@@ -1387,7 +1387,7 @@ typedef struct _State {
 
 
 typedef struct _EhcNode {
-  
+
   State S;
 
   int op;
@@ -1430,7 +1430,7 @@ typedef struct _PlanHashEntry {
 
 
 typedef struct _BfsNode {
-  
+
   State S;
 
   int op;
@@ -1598,7 +1598,7 @@ extern char *gdomain_name;
  */
 extern PlOperator *gloaded_ops;
 
-/* stores initials as fact_list 
+/* stores initials as fact_list
  */
 extern PlNode *gorig_initial_facts;
 
@@ -1635,7 +1635,7 @@ extern ParseExpNode *gparse_metric;
 /* connection to instantiation ( except ops, goal, initial )
  */
 
-/* all typed objects 
+/* all typed objects
  */
 extern FactList *gorig_constant_list;
 

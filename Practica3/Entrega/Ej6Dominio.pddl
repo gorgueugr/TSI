@@ -1,5 +1,5 @@
 ﻿(define (domain BELKAN6)
-	 (:requirements :strips :typing :adl :fluents :equality)
+	 (:requirements :strips :typing :adl :fluents)
 	 (:types entregable zapatillas bikini - objeto
 		 			robot zona  personaje orientacion
 		  		tipoterreno)
@@ -84,7 +84,7 @@
 							(not (cogido ?obj))
 							(tiene ?obj ?p)
 							(manoVacia)
-							(increase (puntosRobot)(puntos ?p ?obj))
+							(increase (puntosRobot) (puntos ?p ?obj))
 							(decrease (objetosEntregables) 1)
 						)
 	)

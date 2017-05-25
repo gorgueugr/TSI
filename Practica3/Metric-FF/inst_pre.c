@@ -1005,7 +1005,9 @@ void do_inertia_preprocessing_step_1( void )
   Facts *f;
   FluentValues *ff;
 
+
   collect_inertia_information();
+
 
   if ( gcmd_line.display_info == 105 ) {
     printf("\n\npredicates inertia info:");
@@ -1127,12 +1129,15 @@ void split_initial_state( void )
   Facts *tmp;
   FluentValues *ftmp;
 
+
   for ( i = 0; i < MAX_PREDICATES; i++ ) {
     gtype_to_predicate[i] = -1;
   }
+
   for ( i = 0; i < MAX_TYPES; i++ ) {
     gpredicate_to_type[i] = -1;
   }
+
 
   for ( i = 0; i < gnum_predicates; i++ ) {
     if ( !gis_added[i] &&
@@ -1155,22 +1160,29 @@ void split_initial_state( void )
   }
 
 
+
   /* double size of predicates table as each predicate might need
    * to be translated to NOT-p
    */
   ginitial_predicate = ( Fact ** ) calloc( gnum_predicates * 2, sizeof( Fact * ) );
   gnum_initial_predicate = ( int * ) calloc( gnum_predicates * 2, sizeof( int ) );
+
   for ( i = 0; i < gnum_predicates * 2; i++ ) {
     gnum_initial_predicate[i] = 0;
   }
+  /*FALLO*/
+
   for ( i = 0; i < gnum_full_initial; i++ ) {
     p = gfull_initial[i].predicate;
     gnum_initial_predicate[p]++;
   }
+
+  /*FALLO*/
   for ( i = 0; i < gnum_predicates; i++ ) {
     ginitial_predicate[i] = ( Fact * ) calloc( gnum_initial_predicate[i], sizeof( Fact ) );
     gnum_initial_predicate[i] = 0;
   }
+
   ginitial = NULL;
   gnum_initial = 0;
 

@@ -17,7 +17,6 @@ zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 
 (:INIT
 
   (= (cosasMochila) 0)
-  (= (puntosRobot) 0)
 
   (= (puntos LEONARDO OSCAR) 10)
   (= (puntos LEONARDO ROSA) 1)
@@ -257,29 +256,33 @@ zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 
 (izq oeste sur)
 
 
-    (atP LEONARDO zona1_5)
-    (atP PROFESOR zona4_3)
-    (atP PRINCIPE zona5_2)
-		(atP BRUJA zona1_1)
-    (atP PRINCESA zona3_1)
+(atP LEONARDO zona1_5)
+(atP PROFESOR zona4_3)
+(atP PRINCIPE zona5_2)
+(atP BRUJA zona1_1)
+(atP PRINCESA zona3_1)
+
+
 
     (atO OSCAR zona3_1)
-    (atO MANZANA zona4_3)
-    (atO ROSA zona1_2)
-    (atO ALGORITMO zona1_3)
-    (atO ORO zona1_4)
+    ;(atO MANZANA zona4_3)
+    ;(atO ROSA zona1_2)
+    ;(atO ALGORITMO zona1_3)
+    ;(atO ORO zona1_4)
 
     (atO zapas zona2_5)
     (atO baniador zona2_1)
 
-    (= (objetosEntregables) 5)
+    (= (objetosEntregables) 1)
 
 
 		(atR ROBOT zona2_1)
 		(orientado ROBOT este)
 		(MANOVACIA)
     (= (coste-total) 0)
-      (= (tamanioMochila) 7)
+    (= (tamanioMochila) 2)
+    (= (puntosRobot) 0)
+
 )
 
 (:goal
@@ -294,9 +297,10 @@ zona1_1 zona1_2 zona1_3 zona1_4 zona1_5 zona2_1 zona2_2 zona2_3 zona2_4 zona2_5 
 ;
       ;)
       (and
-        (= (cosasMochila) 2)
-        (= (objetosEntregables) 0)
+          (= (objetosEntregables) 0)
+          (enMochila zapas)
+          (enMochila baniador)
       )
 )
-(:metric maximize (puntosRobot))
+(:metric minimize (puntosRobot))
 )
